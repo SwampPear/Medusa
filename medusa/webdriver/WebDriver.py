@@ -1,8 +1,8 @@
 import subprocess
 import requests
+from time import sleep
 from medusa.webdriver.constants import DRIVER_PATH, ADDRESS, SESSION_ID_REQUEST_BODY
 from medusa.webdriver.exceptions import DriverInitializationError
-from time import sleep
 
 
 class WebDriver:
@@ -31,7 +31,7 @@ class WebDriver:
     _url = f'{ADDRESS}/session'
 
     if session_id:
-      _url = f'{_url}/{session_id}'
+      _url = f'{_url}/{self.session_id}'
 
       if command:
         _url = f'{_url}/{command}'
@@ -68,6 +68,7 @@ class WebDriver:
       if _attempts >= 5:
         raise DriverInitializationError('Failed to get session id.')
 
+
   def _init_driver(self):
     """
     Initializes the driver process for this webdriver.
@@ -87,11 +88,13 @@ class WebDriver:
     except:
       raise DriverInitializationError('Failed to initialize chrome driver.')
     
+
   def _kill(self):
     """
     Kills the webdriver process.
     """
     self.popen.kill()
+
 
   def _quit_browser(self):
     """
@@ -100,10 +103,92 @@ class WebDriver:
     _url = self._fmt_url(session_id=True)
     requests.delete(_url)
 
+
   def exit(self):
     """
     Exits the program and deallocates all running processes.
     """
     self._quit_browser()
     self._kill()
+
+
+  def get_current_window_handle(self):
+    """
+    Gets the current window handle.
+
+    Returns:
+    str:current window handle
+    """
+    _url = self._fmt_url(session_id=True, command='window_handle')
+    _res = requests.get(_url).json()
+
+    return _res['value']
+
+
+  def get_available_window_handles(self):
+    """
+    Gets all available window handles.
+
+    Returns:
+    str[]:list of available window handles
+    """
+    _url = self._fmt_url(session_id=True, command='window_handles')
+    _res = requests.get(_url).json()
+
+    return _res['value']
+  
+
+  def get_current_url(self):
+    """
+    Gets the current url.
+
+    Returns:
+    str:current url
+    """
+    _url = self._fmt_url(session_id=True, command='url')
+    _res = requests.get(_url).json()
+
+    return _res['value']
+  
+
+  def go_to_url(self, url):
+    """
+    Goes to a url.
+
+    Parameters:
+    str:url - the url to navigate to
+    """
+    _body = {
+      'url': url
+    }
+
+    _url = self._fmt_url(session_id=True, command='url')
+    requests.post(_url, json=_body)
+
+  
+  def forward(self):
+    """
+    Goes forward in browser history if possible.
+    """
+
+    _url = self._fmt_url(session_id=True, command='forward')
+    requests.post(_url)
+
+  
+  def back(self):
+    """
+    Goes forward in browser history if possible.
+    """
+
+    _url = self._fmt_url(session_id=True, command='back')
+    requests.post(_url)
+
+
+  def refresh(self):
+    """
+    Goes forward in browser history if possible.
+    """
+
+    _url = self._fmt_url(session_id=True, command='refresh')
+    requests.post(_url)
 
