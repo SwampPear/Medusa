@@ -1,15 +1,40 @@
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-
-# needs integration with all modern browsers
-# 1) Firefox
-# 2) Google Chrome
-# 3) Microsoft Edge
-# 4) Apple Safari
-# 5) Opera
+import subprocess
+import os
+import requests
+from medusa.common import CHROME_DRIVER_PATH
+from time import sleep
 
 
-driver = webdriver.Chrome('./chromedriver')
-driver.get("https://www.python.org")
+class WebDriver:
+  def __init__(self):
+    self.address = 'http://localhost:9515'
 
-print(driver.title)
+    self.init_chrome_driver()
+
+  def init_chrome_driver(self):
+    try:
+      # create chromedriver process
+      self.popen = subprocess.Popen(['drivers/chrome/chromedriver', '--headless'])
+
+      # get session id
+      _res = requests.post(
+        f'{self.address}/session', 
+        json={
+          'desiredCapabilities': {
+            'caps': {
+                'nativeEvents': False,
+                'browserName': 'chrome',
+                'version': '',
+                'platform': 'ANY'
+            }
+          }
+        }
+      )
+
+      self.session_id = _res['sessionId']
+
+      self.popen.kill()
+    except:
+      raise Exception('Failed to initialize chrome driver.')
+    
+q = WebDriver()
