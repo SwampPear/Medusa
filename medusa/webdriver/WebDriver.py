@@ -1,7 +1,7 @@
 import subprocess
 import requests
-from medusa.common.constants import DRIVER_PATH, ADDRESS, SESSION_ID_REQUEST_BODY
-from medusa.common.exceptions import DriverInitializationError
+from medusa.webdriver.constants import DRIVER_PATH, ADDRESS, SESSION_ID_REQUEST_BODY
+from medusa.webdriver.exceptions import DriverInitializationError
 from time import sleep
 
 
@@ -15,6 +15,29 @@ class WebDriver:
     """
     self.popen = self._init_driver()
     self.session_id = self._get_session_id()
+
+
+  def _fmt_url(self, session_id=False, command=None):
+    """
+    Formats a url for usage with the JSON wire protocol.
+
+    Parameters:
+    bool:session_id - session id used or not
+    str:command - command to be used
+
+    Returns:
+    str:the formatted url
+    """
+    _url = f'{ADDRESS}/session'
+
+    if session_id:
+      _url = f'{_url}/{session_id}'
+
+      if command:
+        _url = f'{_url}/{command}'
+
+    return _url
+
 
   def _get_session_id(self):
     """
@@ -31,8 +54,9 @@ class WebDriver:
     while _attempts < 5:
       try:
         # get session id
+        _url = self._fmt_url()
         _res = requests.post(
-          f'{ADDRESS}/session', 
+          _url, 
           json=SESSION_ID_REQUEST_BODY
         ).json()
 
@@ -56,7 +80,7 @@ class WebDriver:
     """
     try:
       return subprocess.Popen([
-        DRIVER_PATH, 
+        DRIVER_PATH,
         '--headless'
       ])
 
@@ -73,8 +97,8 @@ class WebDriver:
     """
     Quits the browser.
     """
-    _url = f'{ADDRESS}/session/{self.session_id}'
-    _res = requests.delete(_url)
+    _url = self._fmt_url(session_id=True)
+    requests.delete(_url)
 
   def exit(self):
     """
