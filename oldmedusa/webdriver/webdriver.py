@@ -66,6 +66,7 @@ class WebDriver:
         sleep(1)
 
       if _attempts >= 5:
+        self.exit()
         raise DriverInitializationError('Failed to get session id.')
 
 
@@ -86,6 +87,7 @@ class WebDriver:
       ])
 
     except:
+      self.exit()
       raise DriverInitializationError('Failed to initialize chrome driver.')
     
 
