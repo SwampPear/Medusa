@@ -1,9 +1,12 @@
 import sys
 import os
-from medusa.webdriver.webdriver import WebDriver
+from time import sleep
 
 
 sys.path[0] = os.getcwd()
+
+
+from medusa.webdriver.webdriver import WebDriver
 
 
 if __name__ == '__main__':

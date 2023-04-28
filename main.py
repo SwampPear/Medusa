@@ -1,6 +1,6 @@
 import subprocess
 import requests
-from medusa.common import DRIVER_PATH
+from medusa.bot import DRIVER_PATH
 from time import sleep
 
 

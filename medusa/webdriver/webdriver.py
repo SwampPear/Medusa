@@ -1,8 +1,21 @@
 import subprocess
 import requests
 from time import sleep
-from medusa.webdriver.constants import DRIVER_PATH, ADDRESS, SESSION_ID_REQUEST_BODY
 from medusa.webdriver.exceptions import DriverInitializationError
+
+
+DRIVER_PATH = 'drivers/chrome/chromedriver'
+ADDRESS = 'http://localhost:9515'
+SESSION_ID_REQUEST_BODY = {
+  'desiredCapabilities': {
+    'caps': {
+        'nativeEvents': False,
+        'browserName': 'chrome',
+        'version': '',
+        'platform': 'ANY'
+    }
+  }
+}
 
 
 class WebDriver:
