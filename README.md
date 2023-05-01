@@ -1,12 +1,6 @@
 <img src="assets/medusa_banner.svg" alt="medusa"/>
 
-# Medusa 0.0.1
-> The Gorgoneion symbolizes protection.
+# Medusa - Version 0.0.1
+> The Gorgoneions of ancient Greece proudly symbolized protection from evil.
 
-## Requirements
-
-
-
-### Nice touches
-1) javascript interaction
-2) possibly ai tuning
+Medusa is a tool for vulnerability discovery automated using the Chromium webdriver and a custom proxy and webcrawler.
