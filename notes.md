@@ -1,1 +1,4 @@
-# uses json wire protocol
+XXE
+XML Injection
+OS Command Injection
+SQL Injection
