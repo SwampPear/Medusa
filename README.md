@@ -1,4 +1,4 @@
-<img src="assets/medusa_logo.svg"/>
+<img src="assets/medusa_banner.svg" alt="medusa"/>
 
 # Medusa 0.0.1
 > The Gorgoneion symbolizes protection.
