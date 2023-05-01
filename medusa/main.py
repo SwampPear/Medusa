@@ -1,6 +1,5 @@
 import sys
 import os
-from time import sleep
 
 
 sys.path[0] = os.getcwd()

@@ -44,10 +44,10 @@ class WebDriver:
     _url = f'{ADDRESS}/session'
 
     if session_id:
-      _url = f'{_url}/{self.session_id}'
+      _url += f'/{self.session_id}'
 
       if command:
-        _url = f'{_url}/{command}'
+        _url += f'/{command}'
 
     return _url
 
@@ -126,6 +126,28 @@ class WebDriver:
     self._quit_browser()
     self._kill()
 
+  
+  def _execute_command(self, command, type, body=None):
+    """
+    Executes a given command.
+
+    Parameters:
+    str:command - the command to execute
+
+    Returns:
+    json:response
+    """
+
+    if type == 'get':
+      return requests.get(
+        self._fmt_url(session_id=True, command=command)
+      ).json()
+    elif type == 'post':
+      return requests.post(
+        self._fmt_url(session_id=True, command=command),
+        json=body
+      ).json()
+
 
   def get_current_window_handle(self):
     """
@@ -134,11 +156,8 @@ class WebDriver:
     Returns:
     str:current window handle
     """
-    _url = self._fmt_url(session_id=True, command='window_handle')
-    _res = requests.get(_url).json()
-
-    return _res['value']
-
+    return self._execute_command('window_handle', type='get')['value']
+  
 
   def get_available_window_handles(self):
     """
@@ -147,10 +166,7 @@ class WebDriver:
     Returns:
     str[]:list of available window handles
     """
-    _url = self._fmt_url(session_id=True, command='window_handles')
-    _res = requests.get(_url).json()
-
-    return _res['value']
+    return self._execute_command('window_handles', type='get')['value']
   
 
   def get_current_url(self):
@@ -160,10 +176,7 @@ class WebDriver:
     Returns:
     str:current url
     """
-    _url = self._fmt_url(session_id=True, command='url')
-    _res = requests.get(_url).json()
-
-    return _res['value']
+    return self._execute_command('url', type='get')['value']
   
 
   def go_to_url(self, url):
@@ -173,37 +186,82 @@ class WebDriver:
     Parameters:
     str:url - the url to navigate to
     """
-    _body = {
-      'url': url
-    }
-
-    _url = self._fmt_url(session_id=True, command='url')
-    requests.post(_url, json=_body)
+    self._execute_command(
+      'url', 
+      type='post', 
+      body = {
+        'url': url
+      }
+    )
 
   
   def forward(self):
     """
     Goes forward in browser history if possible.
     """
-
-    _url = self._fmt_url(session_id=True, command='forward')
-    requests.post(_url)
+    self._execute_command('forward', type='post')
 
   
   def back(self):
     """
     Goes forward in browser history if possible.
     """
-
-    _url = self._fmt_url(session_id=True, command='back')
-    requests.post(_url)
+    self._execute_command('back', type='post')
 
 
   def refresh(self):
     """
     Goes forward in browser history if possible.
     """
+    self._execute_command('refresh', type='post')
 
-    _url = self._fmt_url(session_id=True, command='refresh')
-    requests.post(_url)
+  
+  def execute(self, script, args=None):
+    """
+    Executes a script in the currently selected frame.
 
+    Parameters:
+    str:script - the script to execute
+    []:args - the script arguments
+
+    Returns:
+    *: value returned from the script
+    """
+
+    _body = {
+      'script': script
+    }
+
+    if args:
+      _body['args'] = args
+
+    self._execute_command(
+      'execute', 
+      type='post', 
+      body = _body
+    )
+
+  def execute_async(self, script, args=None):
+    """
+    Executes a script in the currently selected frame.
+
+    Parameters:
+    str:script - the script to execute
+    []:args - the script arguments
+
+    Returns:
+    *: value returned from the script
+    """
+
+    _body = {
+      'script': script
+    }
+
+    if args:
+      _body['args'] = args
+
+    self._execute_command(
+      'execute', 
+      type='post', 
+      body = _body
+    )
