@@ -261,7 +261,7 @@ class WebDriver:
       _body['args'] = args
 
     self._execute_command(
-      'execute', 
+      'execute_async', 
       type='post', 
       body = _body
     )
