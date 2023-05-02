@@ -17,3 +17,28 @@ class DOMNode:
     self._attributes = attributes
     self._parent = parent
     self._children = []
+
+  
+  def __str__(self):
+    """
+    Formats a pretty string to print representing this DOMNode.
+    """
+
+    _children = []
+
+    for _child in self._children:
+      _children.append(str(_child))
+
+    _output = f'Type: {self._type}; Attributes: {self._attributes}; Children: {_children}'
+
+    return _output
+
+  
+  def insert_child(self, child):
+    """
+    Inserts a child DOMNode into this DOMNode.
+
+    Parameters:
+    DOMNode:child - the node to insert
+    """
+    self._children.append(child)

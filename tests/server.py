@@ -2,7 +2,7 @@ import subprocess
 
 
 def app(environ, start_response):
-  data = b"<html lang=\"en\"><body><div>hello</div></body></html>\n"
+  data = b"<html lang=\"en\"><body><div>one</div><div>two</div></body></html>\n"
   status = '200 OK'
   headers = [
       ("Content-Type", "html"),
