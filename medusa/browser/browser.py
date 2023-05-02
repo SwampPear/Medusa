@@ -1,9 +1,8 @@
 import subprocess
 import sys
-import os
 import requests
 from time import sleep
-from medusa.webdriver.exceptions import DriverInitializationError
+from medusa.browser.exceptions import BrowserInitializationError
 
 
 DRIVER_PATH = f'{sys.argv[1]}/drivers/chrome/chromedriver'
@@ -20,13 +19,13 @@ SESSION_ID_REQUEST_BODY = {
 }
 
 
-class WebDriver:
+class Browser:
   """
   Interface to interact with chrome using the chromium webdriver.
   """
   def __init__(self):
     """
-    Initializes this WebDriver object.
+    Initializes this Browser object.
     """
     self.popen = self._init_driver()
     self.session_id = self._get_session_id()
@@ -62,7 +61,7 @@ class WebDriver:
     str:session id
 
     Throws:
-    DriverInitializationError:error on request failing
+    BrowserInitializationError:error on request failing
     """
     _attempts = 0
 
@@ -82,7 +81,7 @@ class WebDriver:
 
       if _attempts >= 5:
         self.exit()
-        raise DriverInitializationError('Failed to get session id.')
+        raise BrowserInitializationError('Failed to get session id.')
 
 
   def _init_driver(self):
@@ -108,7 +107,7 @@ class WebDriver:
 
     except:
       self.exit()
-      raise DriverInitializationError('Failed to initialize chrome driver.')
+      raise BrowserInitializationError('Failed to initialize chrome driver.')
     
 
   def _kill(self):

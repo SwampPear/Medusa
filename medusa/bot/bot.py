@@ -1,4 +1,4 @@
-from medusa.webdriver.webdriver import WebDriver
+from medusa.browser.browser import Browser
 
 
 class Bot:
@@ -11,13 +11,13 @@ class Bot:
     Initializes this Bot object.
     """
     
-    self.web_driver = WebDriver()
+    self.browser = Browser()
 
 
   def run(self):
     """
     Main loop for this bot.
     """
-    print(self.web_driver.session_id)
-    self.web_driver.go_to_url('https://www.google.com')
-    self.web_driver.exit()
+
+    self.browser.go_to_url('https://www.google.com')
+    self.browser.exit()

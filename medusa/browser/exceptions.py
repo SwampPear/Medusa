@@ -1,4 +1,4 @@
-class DriverInitializationError(Exception):
+class BrowserInitializationError(Exception):
   """
   Error with driver initializing.
   """
