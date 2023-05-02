@@ -1,5 +1,6 @@
 import subprocess
 import sys
+import os
 import requests
 from time import sleep
 from medusa.webdriver.exceptions import DriverInitializationError
@@ -97,8 +98,13 @@ class WebDriver:
     try:
       return subprocess.Popen([
         DRIVER_PATH,
-        '--headless'
-      ])
+        '--headless=new',
+        'start-maximized',
+        '--disable-gpu',
+        '--disable-extensions'
+      ],
+        stdout=subprocess.PIPE
+      )
 
     except:
       self.exit()
