@@ -20,6 +20,6 @@ class Bot:
     Main loop for this bot.
     """
 
-    self.browser.go_to_url('https://github.com/SwampPear/Medusa')
+    self.browser.go_to_url('http://127.0.0.1:8000/')
     sleep(10)
     self.browser.exit()
