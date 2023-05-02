@@ -11,3 +11,6 @@ from medusa.bot.bot import Bot
 if __name__ == '__main__':
   _bot = Bot()
   _bot.run()
+
+# access site
+# crawl around and scan for vulnerabilities

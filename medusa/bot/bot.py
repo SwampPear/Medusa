@@ -1,4 +1,5 @@
 from medusa.browser.browser import Browser
+from time import sleep
 
 
 class Bot:
@@ -19,5 +20,6 @@ class Bot:
     Main loop for this bot.
     """
 
-    self.browser.go_to_url('https://www.google.com')
+    self.browser.go_to_url('https://github.com/SwampPear/Medusa')
+    sleep(10)
     self.browser.exit()
