@@ -8,6 +8,23 @@ class Parser:
     """
     Initializes this Parser object.
     """
+    self._self_closing_html_tags = [
+      'area',
+      'base',
+      'br',
+      'col',
+      'embed',
+      'hr',
+      'img',
+      'input',
+      'link',
+      'meta',
+      'param',
+      'source',
+      'track',
+      'wbr'
+    ]
+
     self._response = response
 
     self.headers = self._response.headers
@@ -32,7 +49,7 @@ class Parser:
       )
 
       print(
-        _suffix
+        _prefix
       )
 
     
