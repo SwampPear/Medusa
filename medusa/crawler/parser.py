@@ -18,7 +18,8 @@ SELF_CLOSING_ELEMENTS = [
   'param',
   'source',
   'track',
-  'wbr'
+  'wbr',
+  '!DOCTYPE'
 ]
 
 
@@ -31,16 +32,14 @@ class Parser:
 
     self.headers = self._response.headers
 
-    self.elements = []
+    self.elements = DOMNode(type='dom_tree')
 
     self._parse_DOM(self._response.text)
 
-    for _element in self.elements:
-      print(str(_element))
+    print(self.elements)
 
 
-
-  def _digest_whitespace(self, DOM):
+  def _sanitize_whitespace(self, DOM):
     """
     Removes all white space and newlines in a given DOM string.
 
@@ -70,6 +69,10 @@ class Parser:
     """
     _attributes = []
 
+    # sanitize potential closing slash
+    if DOM[-1] == '/':
+      DOM = DOM[:len(DOM) - 1]
+
     # extract valued attributes
     _valued_attributes = re.findall(re.compile(r'[^"\s]*="[^"]*"'), DOM)
 
@@ -85,11 +88,22 @@ class Parser:
 
     # format valued attributes
     for _valued_attribute in _valued_attributes:
+      _attribute_name = _valued_attribute.split('=', 1)[0]
+      _attribute_value = _valued_attribute.split('=', 1)[1].replace('"', '')
+
       _attributes.append({
-        'name': re.search(re.compile(r'(.*)="[^"]*"'), _valued_attribute).group()
+        'name': _attribute_name,
+        'value': _attribute_value
       })
 
-    print(_attributes)
+    # format non-valued attributes
+    for _non_valued_attribute in _non_valued_attributes:
+      _attributes.append({
+        'name': _non_valued_attribute,
+        'value': True
+      })
+
+    return _attributes
 
 
   def _parse_DOM(self, DOM, parent=None):
@@ -101,18 +115,64 @@ class Parser:
     DOMNode:parent - the parent to assign a child to
     """
 
-    DOM = self._digest_whitespace(DOM)
+    DOM = self._sanitize_whitespace(DOM)
 
     # extract opening tag
     _open_search = re.search('<[^<>]*>', DOM)
-    _open_i, _open_f = _open_search.span()
-    _open = re.sub('<|>', '', DOM[_open_i:_open_f])
 
-    # extract DOM type from opening tag
-    _DOM_type = _open.split(' ')[0]
+    if _open_search:
+      _open_i, _open_f = _open_search.span()
+      _open = re.sub('<|>', '', DOM[_open_i:_open_f])
 
-    # extract attributes from opening tag
-    _attributes = self._extract_attributes(_open)
+      # extract DOM type from opening tag
+      _DOM_type = _open.split(' ', 1)[0]
+
+      if len(_open.split(' ', 1)) < 2:
+        _attributes = None
+      else:
+        _open = _open.split(' ', 1)[1]
+
+        # extract attributes from opening tag
+        _attributes = self._extract_attributes(_open)
+
+      # extract opening tag from DOM string
+      DOM = DOM[_open_f:]
+
+      # define and insert node
+      _node = DOMNode(_DOM_type, attributes=_attributes)
+
+      if parent:
+        parent.insert_child(_node)
+      else:
+        self.elements.insert_child(_node)
+
+      # check if element is self-closing
+      if _DOM_type in SELF_CLOSING_ELEMENTS:
+        pass
+      else:
+        _close_search = re.search(f'</{_DOM_type}>', DOM)
+
+        if _close_search:
+          _close_i, _close_f = _close_search.span()
+
+          # extract children
+          _children = DOM[:_close_i]
+
+          # extract children and closing tag fron DOM
+          DOM = DOM[_close_f:]
+
+          # parse DOM on children
+          if _children != '':
+            self._parse_DOM(_children, _node)
+
+      # parse rest of DOM string
+      if DOM != '':
+        self._parse_DOM(DOM, parent)
+
+
+
+
+
 
 
     """

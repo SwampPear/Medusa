@@ -3,7 +3,7 @@ class DOMNode:
   Represents a DOM object to be used with a DOM Parser object.
   """
 
-  def __init__(self, type, attributes, parent=None) -> None:
+  def __init__(self, type, attributes=None, parent=None) -> None:
     """
     Initializes this Parser object.
 
