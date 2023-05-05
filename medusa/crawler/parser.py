@@ -117,57 +117,84 @@ class Parser:
 
     DOM = self._sanitize_whitespace(DOM)
 
-    # extract opening tag
-    _open_search = re.search('<[^<>]*>', DOM)
+    # check for text element
+    _text_search = re.search('[^<>]+', DOM)
 
-    if _open_search:
-      _open_i, _open_f = _open_search.span()
-      _open = re.sub('<|>', '', DOM[_open_i:_open_f])
+    # if text element found and text elment at beginning of string
+    if _text_search and _text_search.span()[0] == 0:
+      _text_i, _text_f = _text_search.span()
 
-      # extract DOM type from opening tag
-      _DOM_type = _open.split(' ', 1)[0]
-
-      if len(_open.split(' ', 1)) < 2:
-        _attributes = None
-      else:
-        _open = _open.split(' ', 1)[1]
-
-        # extract attributes from opening tag
-        _attributes = self._extract_attributes(_open)
-
-      # extract opening tag from DOM string
-      DOM = DOM[_open_f:]
-
-      # define and insert node
-      _node = DOMNode(_DOM_type, attributes=_attributes)
+      # insert text node
+      _node = DOMNode(
+        'text',
+        {
+          'name': 'content',
+          'value': DOM[_text_i:_text_f]
+        }
+      )
 
       if parent:
         parent.insert_child(_node)
       else:
         self.elements.insert_child(_node)
 
-      # check if element is self-closing
-      if _DOM_type in SELF_CLOSING_ELEMENTS:
-        pass
-      else:
-        _close_search = re.search(f'</{_DOM_type}>', DOM)
-
-        if _close_search:
-          _close_i, _close_f = _close_search.span()
-
-          # extract children
-          _children = DOM[:_close_i]
-
-          # extract children and closing tag fron DOM
-          DOM = DOM[_close_f:]
-
-          # parse DOM on children
-          if _children != '':
-            self._parse_DOM(_children, _node)
-
-      # parse rest of DOM string
+      # parse rest of DOM
+      DOM = DOM[_text_f:]
+      
       if DOM != '':
         self._parse_DOM(DOM, parent)
+    else:
+      # extract opening tag
+      _open_search = re.search('<[^<>]*>', DOM)
+
+      if _open_search:
+        _open_i, _open_f = _open_search.span()
+        _open = re.sub('<|>', '', DOM[_open_i:_open_f])
+
+        # extract DOM type from opening tag
+        _DOM_type = _open.split(' ', 1)[0]
+
+        if len(_open.split(' ', 1)) < 2:
+          _attributes = None
+        else:
+          _open = _open.split(' ', 1)[1]
+
+          # extract attributes from opening tag
+          _attributes = self._extract_attributes(_open)
+
+        # extract opening tag from DOM string
+        DOM = DOM[_open_f:]
+
+        # define and insert node
+        _node = DOMNode(_DOM_type, attributes=_attributes)
+
+        if parent:
+          parent.insert_child(_node)
+        else:
+          self.elements.insert_child(_node)
+
+        # check if element is self-closing
+        if _DOM_type in SELF_CLOSING_ELEMENTS:
+          pass
+        else:
+          _close_search = re.search(f'</{_DOM_type}>', DOM)
+
+          if _close_search:
+            _close_i, _close_f = _close_search.span()
+
+            # extract children
+            _children = DOM[:_close_i]
+
+            # extract children and closing tag fron DOM
+            DOM = DOM[_close_f:]
+
+            # parse DOM on children
+            if _children != '':
+              self._parse_DOM(_children, _node)
+
+        # parse rest of DOM string
+        if DOM != '':
+          self._parse_DOM(DOM, parent)
 
 
 

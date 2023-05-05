@@ -23,7 +23,6 @@ class DOMNode:
     """
     Formats a pretty string to print representing this DOMNode.
     """
-
     _children = []
 
     for _child in self._children:
