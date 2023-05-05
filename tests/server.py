@@ -2,7 +2,8 @@ import subprocess
 
 
 def app(environ, start_response):
-  data = b"<html lang=\"en\"><body><div>one</div><div>two</div></body></html>\n"
+  data = open('index.html', 'r').read().encode('utf-8')
+  #data = b"<html lang=\"en\"><body><div>one</div><div>two</div></body></html>"
   status = '200 OK'
   headers = [
       ("Content-Type", "html"),
@@ -12,4 +13,6 @@ def app(environ, start_response):
 
   start_response(status, headers)
   return iter([data])
+
+
 
