@@ -78,9 +78,10 @@ class Parser:
     _DOM_type = _open.split(' ')[0]
 
     # extract attributes from opening tag
+    _raw_attributes = re.findall(re.compile(r'[^"\s]*="[^"]*"'), _open)
     _attributes = []
     print(_open)
-    a = re.findall(re.compile(r'.="'), _open)
+    a = re.findall(re.compile(r'[^"\s]*="[^"]*"'), _open)
     print(a)
     print(len(a))
 
