@@ -40,22 +40,57 @@ class Parser:
 
 
 
-  def _digest_whitespace(self, string):
+  def _digest_whitespace(self, DOM):
     """
-    Removes all white space and newlines in a string.
+    Removes all white space and newlines in a given DOM string.
 
     Parameters:
-    str:string - the string to digest
+    str:DOM - the DOK string to digest
 
     Returns:
     str: the digested string
     """
-    _output = string.replace('\n', '')
+    _output = DOM.replace('\n', '')
     _output = re.sub(re.compile(r'>(\s+)<'), '><', _output)
     _output = re.sub(re.compile(r'>(\s+)'), '>', _output)
     _output = re.sub(re.compile(r'(\s+)<'), '<', _output)
 
     return _output
+  
+
+  def _extract_attributes(self, DOM):
+    """
+    Extracts attributes froma a given DOM tag.
+
+    Parameters:
+    str:DOM - the tag to use
+
+    Returns:
+    []: the extracted attributes
+    """
+    _attributes = []
+
+    # extract valued attributes
+    _valued_attributes = re.findall(re.compile(r'[^"\s]*="[^"]*"'), DOM)
+
+    # extract non valued attributes
+    _non_valued_attributes = []
+
+    for _valued_attribute in _valued_attributes:
+      DOM = re.sub(_valued_attribute, '', DOM)
+
+    for _non_valued_attribute in DOM.split(' '):
+      if _non_valued_attribute != '':
+        _non_valued_attributes.append(_non_valued_attribute)
+
+    # format valued attributes
+    for _valued_attribute in _valued_attributes:
+      _attributes.append({
+        'name': re.search(re.compile(r'(.*)="[^"]*"'), _valued_attribute).group()
+      })
+
+    print(_attributes)
+
 
   def _parse_DOM(self, DOM, parent=None):
     """
@@ -66,7 +101,6 @@ class Parser:
     DOMNode:parent - the parent to assign a child to
     """
 
-    # sanitize string from newlines
     DOM = self._digest_whitespace(DOM)
 
     # extract opening tag
@@ -78,12 +112,7 @@ class Parser:
     _DOM_type = _open.split(' ')[0]
 
     # extract attributes from opening tag
-    _raw_attributes = re.findall(re.compile(r'[^"\s]*="[^"]*"'), _open)
-    _attributes = []
-    print(_open)
-    a = re.findall(re.compile(r'[^"\s]*="[^"]*"'), _open)
-    print(a)
-    print(len(a))
+    _attributes = self._extract_attributes(_open)
 
 
     """
