@@ -33,10 +33,36 @@ class Parser:
     self.headers = self._response.headers
 
     self.elements = DOMNode(type='dom_tree')
+    self.typed_elements = []
 
     self._parse_DOM(self._response.text)
 
-    print(self.elements)
+
+  def _insert_typed_element(self, element):
+    """
+    Inserts a typed element (a, div, img, e.t.c) into the typed elements array.
+
+    Parameters:
+    DOMNode:element - the element to insert
+    """
+    _DOM_type = element.type
+
+    _match_found = False
+
+    for _element_type in self.typed_elements:
+      if _element_type['type'] == _DOM_type:
+        _element_type['elements'].append(element)
+        _match_found = True
+
+        break
+
+    if not _match_found:
+      self.typed_elements.append({
+        'type': _DOM_type,
+        'elements': [
+          element
+        ]
+      })
 
 
   def _sanitize_whitespace(self, DOM):
@@ -138,6 +164,8 @@ class Parser:
       else:
         self.elements.insert_child(_node)
 
+      self._insert_typed_element(_node)
+
       # parse rest of DOM
       DOM = DOM[_text_f:]
       
@@ -173,10 +201,10 @@ class Parser:
         else:
           self.elements.insert_child(_node)
 
+        self._insert_typed_element(_node)
+
         # check if element is self-closing
-        if _DOM_type in SELF_CLOSING_ELEMENTS:
-          pass
-        else:
+        if _DOM_type not in SELF_CLOSING_ELEMENTS:
           _close_search = re.search(f'</{_DOM_type}>', DOM)
 
           if _close_search:
@@ -195,50 +223,3 @@ class Parser:
         # parse rest of DOM string
         if DOM != '':
           self._parse_DOM(DOM, parent)
-
-
-
-
-
-
-
-    """
-    _pfx_search = re.search('<[a-z|A-Z|\s|=|"]*>', DOM)
-
-    if _pfx_search:
-      _pfx_start, _pfx_end = _pfx_search.span()
-
-      # extract contents of opening tag
-      _prefix = re.sub('<|>', '', DOM[_pfx_start:_pfx_end])
-
-      # DOM type in opening tag
-      _DOM_type = _prefix.split(' ')[0]
-
-      # insert attributes
-      ######################################################
-
-      # search for suffix
-      _sfx_start, _sfx_end = re.search(
-        f'</{_DOM_type}>', DOM
-      ).span()
-
-      # remove suffix
-      if DOM[_sfx_end:] != '':
-        self._parse_DOM(DOM[_sfx_end:], parent=parent)
-
-      _node = DOMNode(_DOM_type, attributes=None)
-
-      # insert into tree
-      if not parent:
-        self.elements.append(_node)
-      else:
-        parent.insert_child(_node)
-
-      self._parse_DOM(DOM[_pfx_end:_sfx_start], _node)
-        
-    elif DOM:
-      _node = DOMNode('text', attributes=None)
-      parent.insert_child(_node)
-
-      DOM = None
-    """
