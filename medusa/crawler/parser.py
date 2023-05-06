@@ -1,4 +1,3 @@
-import requests
 from requests import Response
 import re
 from medusa.crawler.dom_node import DOMNode
@@ -28,14 +27,15 @@ class Parser:
     """
     Initializes this Parser object.
     """
-    self._response = response
-
-    self.headers = self._response.headers
+    self.status = response.status_code
+    self.headers = response.headers
+    self.cookies = response.cookies
+    self.raw_text = response.text
 
     self.elements = DOMNode(type='dom_tree')
     self.typed_elements = []
 
-    self._parse_DOM(self._response.text)
+    self._parse_DOM(response.text)
 
 
   def _insert_typed_element(self, element):
