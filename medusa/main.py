@@ -12,7 +12,7 @@ from medusa.crawler.parser import Parser
 
 if __name__ == '__main__':
   _bot = Bot()
-  _bot.run()
+  #_bot.run()
   #url = 'https://www.google.com'
   #res = requests.get(url)
   #print(res.cookies)
