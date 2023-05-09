@@ -52,7 +52,7 @@ class Parser:
   
 
   def _extract_attributes(self, DOM: str) -> dict:
-    _attributes = []
+    _attributes = {}
 
     # sanitize potential closing slash
     if DOM[-1] == '/':
@@ -76,17 +76,11 @@ class Parser:
       _attribute_name = _valued_attribute.split('=', 1)[0]
       _attribute_value = _valued_attribute.split('=', 1)[1].replace('"', '')
 
-      _attributes.append({
-        'name': _attribute_name,
-        'value': _attribute_value
-      })
+      _attributes[_attribute_name] = _attribute_value
 
     # format non-valued attributes
     for _non_valued_attribute in _non_valued_attributes:
-      _attributes.append({
-        'name': _non_valued_attribute,
-        'value': True
-      })
+      _attributes[_attribute_name] = _attribute_value
 
     return _attributes
 
