@@ -5,7 +5,7 @@ class DOMNode:
   def __init__(
     self, 
     type: str, 
-    attributes: Optional[dict]=None, 
+    attributes: dict={}, 
     parent: Optional['DOMNode']=None
   ) -> None:
     self.type = type
@@ -27,3 +27,7 @@ class DOMNode:
   
   def insert_child(self, child) -> None:
     self._children.append(child)
+
+  
+  def insert_attribute(self, key: str, value):
+    self._attributes[key] = value

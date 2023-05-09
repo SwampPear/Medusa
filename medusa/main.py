@@ -1,5 +1,6 @@
 import sys
 import requests
+from time import sleep
 
 
 sys.path[0] = sys.argv[1]
@@ -10,11 +11,14 @@ from medusa.crawler.parser import Parser
 
 
 if __name__ == '__main__':
-  #_app = App()
-  #_app.run()
+  _app = App()
+  _app.run()
 
-  a = requests.get('https://www.waspbarcode.com')
-  b = Parser(a)
+  sleep(3)
 
-  for element in b.typed_elements['a']:
-    print(element)
+  a = requests.get('https://www.blackdogcustoms.com')
+  #b = Parser(a)
+  print(a.text)
+
+  #for element in b.typed_elements['a']:
+  #  print(element._attributes['href'])

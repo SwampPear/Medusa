@@ -162,8 +162,11 @@ class Parser:
             DOM = DOM[_close_f:]
 
             # parse DOM on children
-            if _children != '':
-              self._parse_DOM(_children, _node)
+            if _DOM_type == 'script':
+              _node.insert_attribute('script', _children)
+            else:
+              if _children != '':
+                self._parse_DOM(_children, _node)
 
         # parse rest of DOM string
         if DOM != '':
