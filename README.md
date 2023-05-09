@@ -1,4 +1,4 @@
-<img src=".github/assets/medusa_banner.svg" alt="medusa"/>
+<img src="assets/medusa_banner.svg" alt="medusa"/>
 
 # Medusa - Version 0.0.1
 > The Gorgoneions of ancient Greece proudly symbolized protection from evil.

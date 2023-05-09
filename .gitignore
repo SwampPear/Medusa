@@ -2,6 +2,4 @@ __pycache__
 env/
 .env
 notes.md
-
-xss
-idor
+tests
