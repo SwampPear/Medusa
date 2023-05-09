@@ -4,19 +4,11 @@ from time import sleep
 
 class Bot:
   def __init__(self) -> None:
-    """
-    Initializes this Bot object.
-    """
-    
     self._print_welcome()
     #self.browser = Browser()
 
   
-  def _print_welcome(self):
-    """
-    Prints the welcome screen for the CLI.
-    """
-
+  def _print_welcome(self) -> None:
     _message = [
       '    __  _____________  __  _______ ___ ',
       '   /  |/  / ____/ __ \/ / / / ___//   |',
@@ -32,11 +24,7 @@ class Bot:
     print(f"\033[92m{_message}\033[0m")
                                        
 
-  def run(self):
-    """
-    Main loop for this bot.
-    """
-
+  def run(self) -> None:
     self.browser.go_to_url('https://www.google.com')
     sleep(100)
     self.browser.exit()
