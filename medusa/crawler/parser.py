@@ -80,7 +80,7 @@ class Parser:
 
     # format non-valued attributes
     for _non_valued_attribute in _non_valued_attributes:
-      _attributes[_attribute_name] = True
+      _attributes[_non_valued_attribute] = True
 
     return _attributes
 
