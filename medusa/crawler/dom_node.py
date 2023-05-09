@@ -1,28 +1,20 @@
+from typing import Optional
+
+
 class DOMNode:
-  """
-  Represents a DOM object to be used with a DOM Parser object.
-  """
-
-  def __init__(self, type, attributes=None, parent=None) -> None:
-    """
-    Initializes this Parser object.
-
-    Parameters:
-    str:type - the type of DOM element this Node represents
-    dict:attributes - the attributes represented by this DOM element
-    Node:parent - the parent node to this DOM element
-    """
-
+  def __init__(
+    self, 
+    type: str, 
+    attributes: Optional[dict]=None, 
+    parent: Optional['DOMNode']=None
+  ) -> None:
     self.type = type
     self._attributes = attributes
     self._parent = parent
     self._children = []
 
   
-  def __str__(self):
-    """
-    Formats a pretty string to print representing this DOMNode.
-    """
+  def __str__(self) -> str:
     _children = []
 
     for _child in self._children:
@@ -33,11 +25,5 @@ class DOMNode:
     return _output
 
   
-  def insert_child(self, child):
-    """
-    Inserts a child DOMNode into this DOMNode.
-
-    Parameters:
-    DOMNode:child - the node to insert
-    """
+  def insert_child(self, child) -> None:
     self._children.append(child)

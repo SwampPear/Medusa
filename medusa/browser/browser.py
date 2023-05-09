@@ -3,7 +3,7 @@ from subprocess import Popen, PIPE
 import sys
 import requests
 from time import sleep
-from medusa.browser.exceptions import BrowserInitializationError
+from medusa.exceptions import BrowserInitializationError
 
 
 DRIVER_PATH = f'{sys.argv[1]}/drivers/chrome/chromedriver'
