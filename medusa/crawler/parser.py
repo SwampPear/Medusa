@@ -1,7 +1,7 @@
 from typing import Optional
 import re
 from requests import Response
-from medusa.crawler.dom_node import DOMNode
+from medusa.crawler.data import DOMNode
 
 
 class Parser:
