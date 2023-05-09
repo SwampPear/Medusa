@@ -1,4 +1,5 @@
-import subprocess
+from typing import Union, Optional
+from subprocess import Popen, PIPE
 import sys
 import requests
 from time import sleep
@@ -20,28 +21,12 @@ SESSION_ID_REQUEST_BODY = {
 
 
 class Browser:
-  """
-  Interface to interact with chrome using the chromium webdriver.
-  """
-  def __init__(self):
-    """
-    Initializes this Browser object.
-    """
+  def __init__(self) -> None:
     self.popen = self._init_driver()
     self.session_id = self._get_session_id()
 
 
-  def _fmt_url(self, session_id=False, command=None):
-    """
-    Formats a url for usage with the JSON wire protocol.
-
-    Parameters:
-    bool:session_id - session id used or not
-    str:command - command to be used
-
-    Returns:
-    str:the formatted url
-    """
+  def _fmt_url(self, session_id: bool=False, command: Optional[str]=None) -> str:
     _url = f'{ADDRESS}/session'
 
     if session_id:
@@ -53,16 +38,7 @@ class Browser:
     return _url
 
 
-  def _get_session_id(self):
-    """
-    Gets a valid session id for this webdriver session.
-
-    Returns:
-    str:session id
-
-    Throws:
-    BrowserInitializationError:error on request failing
-    """
+  def _get_session_id(self) -> str:
     _attempts = 0
 
     while _attempts < 5:
@@ -84,25 +60,16 @@ class Browser:
         raise BrowserInitializationError('Failed to get session id.')
 
 
-  def _init_driver(self):
-    """
-    Initializes the driver process for this webdriver.
-
-    Returns:
-    subprocess.Popen:driver process
-
-    Throws:
-    DriverInitializationError:error on driver creation failing
-    """
+  def _init_driver(self) -> Popen:
     try:
-      return subprocess.Popen([
+      return Popen([
         DRIVER_PATH,
         '--headless=new',
         'start-maximized',
         '--disable-gpu',
         '--disable-extensions'
       ],
-        stdout=subprocess.PIPE
+        stdout=PIPE
       )
 
     except:
@@ -110,40 +77,26 @@ class Browser:
       raise BrowserInitializationError('Failed to initialize chrome driver.')
     
 
-  def _kill(self):
-    """
-    Kills the webdriver process.
-    """
+  def _kill(self) -> None:
     self.popen.kill()
 
 
-  def _quit_browser(self):
-    """
-    Quits the browser.
-    """
+  def _quit_browser(self) -> None:
     _url = self._fmt_url(session_id=True)
     requests.delete(_url)
 
 
-  def exit(self):
-    """
-    Exits the program and deallocates all running processes.
-    """
+  def exit(self) -> None:
     self._quit_browser()
     self._kill()
 
   
-  def _execute_command(self, command, type, body=None):
-    """
-    Executes a given command.
-
-    Parameters:
-    str:command - the command to execute
-
-    Returns:
-    json:response
-    """
-
+  def _execute_command(
+    self, 
+    command: str, 
+    type: str, 
+    body: Optional[dict]=None
+  ) -> dict:
     if type == 'get':
       return requests.get(
         self._fmt_url(session_id=True, command=command)
@@ -155,43 +108,19 @@ class Browser:
       ).json()
 
 
-  def get_current_window_handle(self):
-    """
-    Gets the current window handle.
-
-    Returns:
-    str:current window handle
-    """
+  def get_current_window_handle(self) -> dict:
     return self._execute_command('window_handle', type='get')['value']
   
 
-  def get_available_window_handles(self):
-    """
-    Gets all available window handles.
-
-    Returns:
-    str[]:list of available window handles
-    """
+  def get_available_window_handles(self) -> dict:
     return self._execute_command('window_handles', type='get')['value']
   
 
-  def get_current_url(self):
-    """
-    Gets the current url.
-
-    Returns:
-    str:current url
-    """
+  def get_current_url(self) -> dict:
     return self._execute_command('url', type='get')['value']
   
 
-  def go_to_url(self, url):
-    """
-    Goes to a url.
-
-    Parameters:
-    str:url - the url to navigate to
-    """
+  def go_to_url(self, url) -> dict:
     self._execute_command(
       'url', 
       type='post', 
@@ -201,39 +130,22 @@ class Browser:
     )
 
   
-  def forward(self):
-    """
-    Goes forward in browser history if possible.
-    """
+  def forward(self) -> dict:
     self._execute_command('forward', type='post')
 
   
-  def back(self):
-    """
-    Goes forward in browser history if possible.
-    """
+  def back(self) -> dict:
     self._execute_command('back', type='post')
 
 
-  def refresh(self):
-    """
-    Goes forward in browser history if possible.
-    """
+  def refresh(self) -> dict:
     self._execute_command('refresh', type='post')
 
   
+
+
+
   def execute(self, script, args=None):
-    """
-    Executes a script in the currently selected frame.
-
-    Parameters:
-    str:script - the script to execute
-    []:args - the script arguments
-
-    Returns:
-    *: value returned from the script
-    """
-
     _body = {
       'script': script
     }
