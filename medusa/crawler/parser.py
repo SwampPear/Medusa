@@ -1,32 +1,29 @@
-from requests import Response
+from typing import Optional
 import re
+from requests import Response
 from medusa.crawler.dom_node import DOMNode
-
-
-SELF_CLOSING_ELEMENTS = [
-  'area',
-  'base',
-  'br',
-  'col',
-  'embed',
-  'hr',
-  'img',
-  'input',
-  'link',
-  'meta',
-  'param',
-  'source',
-  'track',
-  'wbr',
-  '!DOCTYPE'
-]
 
 
 class Parser:
   def __init__(self, response: Response) -> None:
-    """
-    Initializes this Parser object.
-    """
+    self.self_closing_elements = [
+      'area',
+      'base',
+      'br',
+      'col',
+      'embed',
+      'hr',
+      'img',
+      'input',
+      'link',
+      'meta',
+      'param',
+      'source',
+      'track',
+      'wbr',
+      '!DOCTYPE'
+    ]
+
     self.status = response.status_code
     self.headers = response.headers
     self.cookies = response.cookies
@@ -38,13 +35,7 @@ class Parser:
     self._parse_DOM(response.text)
 
 
-  def _insert_typed_element(self, element):
-    """
-    Inserts a typed element (a, div, img, e.t.c) into the typed elements array.
-
-    Parameters:
-    DOMNode:element - the element to insert
-    """
+  def _insert_typed_element(self, element: DOMNode) -> None:
     _DOM_type = element.type
 
     _match_found = False
@@ -65,16 +56,7 @@ class Parser:
       })
 
 
-  def _sanitize_whitespace(self, DOM):
-    """
-    Removes all white space and newlines in a given DOM string.
-
-    Parameters:
-    str:DOM - the DOK string to digest
-
-    Returns:
-    str: the digested string
-    """
+  def _sanitize_whitespace(self, DOM: str) -> None:
     _output = DOM.replace('\n', '')
     _output = re.sub(re.compile(r'>(\s+)<'), '><', _output)
     _output = re.sub(re.compile(r'>(\s+)'), '>', _output)
@@ -83,16 +65,7 @@ class Parser:
     return _output
   
 
-  def _extract_attributes(self, DOM):
-    """
-    Extracts attributes froma a given DOM tag.
-
-    Parameters:
-    str:DOM - the tag to use
-
-    Returns:
-    []: the extracted attributes
-    """
+  def _extract_attributes(self, DOM: str) -> dict:
     _attributes = []
 
     # sanitize potential closing slash
@@ -132,15 +105,7 @@ class Parser:
     return _attributes
 
 
-  def _parse_DOM(self, DOM, parent=None):
-    """
-    Recursively parses the given DOM into a DOM element tree.
-
-    Parameters:
-    str:DOM - the DOM to parse
-    DOMNode:parent - the parent to assign a child to
-    """
-
+  def _parse_DOM(self, DOM: str, parent: Optional[DOMNode]=None):
     DOM = self._sanitize_whitespace(DOM)
 
     # check for text element
@@ -204,7 +169,7 @@ class Parser:
         self._insert_typed_element(_node)
 
         # check if element is self-closing
-        if _DOM_type not in SELF_CLOSING_ELEMENTS:
+        if _DOM_type not in self.self_closing_elements:
           _close_search = re.search(f'</{_DOM_type}>', DOM)
 
           if _close_search:
