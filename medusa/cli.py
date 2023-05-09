@@ -1,3 +1,4 @@
+from typing import Optional
 import sys
 
 class FG:
@@ -11,9 +12,11 @@ class FG:
   WHITE = '\u001b[37m'
 
 class CLI:
-  def __init__(self) -> None:
-    self.END = '\033[0m'
+  def write(text: str='\n', color: Optional[str]=None) -> None:
+    _out = text
 
-  def write(text: str='\n') -> None:
-    sys.stdout.write(text)
+    if color:
+      _out = f'{color}{_out}\n'
+
+    sys.stdout.write(_out)
     sys.stdout.flush()

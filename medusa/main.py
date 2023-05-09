@@ -1,6 +1,4 @@
 import sys
-import os
-import requests
 
 
 sys.path[0] = sys.argv[1]
@@ -8,12 +6,12 @@ sys.path[0] = sys.argv[1]
 
 from medusa.bot import Bot
 from medusa.crawler.parser import Parser
+from medusa.cli import CLI, FG
 
 
 if __name__ == '__main__':
   #_bot = Bot()
-  sys.stdout.write('\u001b[36mtest\n')
-  sys.stdout.flush()
+  CLI.write('test', FG.GREEN)
 
   #_bot.run()
   #url = 'https://www.google.com'
