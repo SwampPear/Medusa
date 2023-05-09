@@ -3,11 +3,7 @@ from time import sleep
 
 
 class Bot:
-  """
-  Represents an automated process for which all logic will be run through.
-  """
-
-  def __init__(self):
+  def __init__(self) -> None:
     """
     Initializes this Bot object.
     """
