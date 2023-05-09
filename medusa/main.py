@@ -1,23 +1,20 @@
 import sys
+import requests
 
 
 sys.path[0] = sys.argv[1]
 
 
-from medusa.bot import Bot
+from medusa.app import App
 from medusa.crawler.parser import Parser
-from medusa.cli import CLI, FG
 
 
 if __name__ == '__main__':
-  #_bot = Bot()
-  CLI.write('test', FG.GREEN)
+  #_app = App()
+  #_app.run()
 
-  #_bot.run()
-  #url = 'https://www.google.com'
-  #res = requests.get(url)
-  #print(res.cookies)
-  #parsed = Parser(res)
+  a = requests.get('https://www.waspbarcode.com')
+  b = Parser(a)
 
-# access site
-# crawl around and scan for vulnerabilities
+  for element in b.typed_elements['a']:
+    print(element)

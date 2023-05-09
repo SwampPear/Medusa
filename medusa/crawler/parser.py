@@ -30,30 +30,16 @@ class Parser:
     self.raw_text = response.text
 
     self.elements = DOMNode(type='dom_tree')
-    self.typed_elements = []
+    self.typed_elements = {}
 
     self._parse_DOM(response.text)
 
 
   def _insert_typed_element(self, element: DOMNode) -> None:
-    _DOM_type = element.type
+    if element.type not in self.typed_elements.keys():
+      self.typed_elements[element.type] = []
 
-    _match_found = False
-
-    for _element_type in self.typed_elements:
-      if _element_type['type'] == _DOM_type:
-        _element_type['elements'].append(element)
-        _match_found = True
-
-        break
-
-    if not _match_found:
-      self.typed_elements.append({
-        'type': _DOM_type,
-        'elements': [
-          element
-        ]
-      })
+    self.typed_elements[element.type].append(element)
 
 
   def _sanitize_whitespace(self, DOM: str) -> None:
