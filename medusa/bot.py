@@ -21,7 +21,7 @@ class Bot:
     _message = '\n'.join(_message)
     
 
-    print(f"\033[92m{_message}\033[0m")
+    print(f"\u001b[32m{_message}\033[0m")
                                        
 
   def run(self) -> None:
