@@ -163,6 +163,8 @@ class Parser:
 
             # parse DOM on children
             if _DOM_type == 'script':
+              print('script')
+              print(_children)
               _node.insert_attribute('script', _children)
             else:
               if _children != '':

@@ -29,9 +29,8 @@ class App:
       '\n'.join([
         'Usage:',
         ' --- <command> --help',
-        ' --- crawl <url>',
-        ' --- fuzz <url> <flags>',
-        ' --- brute <url> <flags>'
+        ' --- crawl <url> (IN PROGRESS)',
+        ' --- fuzz <url> <flags> (NOT IMPLEMENTED)'
       ]), 
       color=Color.GREEN
     )
