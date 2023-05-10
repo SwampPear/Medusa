@@ -14,9 +14,5 @@ if __name__ == '__main__':
   _app = App()
   _app.run()
 
-  a = requests.get('https://www.waspbarcode.com')
+  a = requests.get('https://www.blackdogcustoms.com')
   b = Parser(a)
-
-  for element in b.typed_elements['a']:
-    if (element._attributes['href']):
-      print(element._attributes['href'])

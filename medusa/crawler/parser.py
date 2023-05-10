@@ -2,6 +2,7 @@ from typing import Optional
 import re
 from requests import Response
 from medusa.crawler.data import DOMNode
+from xml.dom.minidom import parseString
 
 
 class Parser:
@@ -32,8 +33,14 @@ class Parser:
     self.elements = DOMNode(type='dom_tree')
     self.typed_elements = {}
 
-    self._parse_DOM(response.text)
+    self._parse_DOM(self._sanitize_DOM(response.text))
 
+  
+  def _sanitize_DOM(self, DOM) -> None:
+    _out = DOM.replace('\n', '')
+
+    return _out
+  
 
   def _insert_typed_element(self, element: DOMNode) -> None:
     if element.type not in self.typed_elements.keys():
@@ -42,21 +49,8 @@ class Parser:
     self.typed_elements[element.type].append(element)
 
 
-  def _sanitize_whitespace(self, DOM: str) -> None:
-    _output = DOM.replace('\n', '')
-    _output = re.sub(re.compile(r'>(\s+)<'), '><', _output)
-    _output = re.sub(re.compile(r'>(\s+)'), '>', _output)
-    _output = re.sub(re.compile(r'(\s+)<'), '<', _output)
-
-    return _output
-  
-
   def _extract_attributes(self, DOM: str) -> dict:
     _attributes = {}
-
-    # sanitize potential closing slash
-    if DOM[-1] == '/':
-      DOM = DOM[:len(DOM) - 1]
 
     # extract valued attributes
     _valued_attributes = re.findall(re.compile(r'[^"\s]*="[^"]*"'), DOM)
@@ -84,6 +78,112 @@ class Parser:
 
     return _attributes
 
+
+  def _parse_DOM(self, DOM: str, parent: Optional[DOMNode]=None) -> None:
+    _node = None
+
+    if DOM:
+      # search for open tag
+      _open_search = re.search('<[^<>]+>', DOM)
+
+      if _open_search:                    # if tag found, continue
+        _open_i, _open_f = _open_search.span()
+
+        if _open_i == 0:                  # if tag is at beginning, continue
+          # extract open tag and remove from DOM
+          _open = DOM[_open_i + 1:_open_f - 1]
+          DOM = DOM[_open_f:]
+
+          # extract type
+          _type = _open.split(' ', 1)[0]
+
+          # sanitize potential closing tag for self closing elements
+          if _open[-1] == '/':
+            _open = _open[:-1]
+
+          # extract attributes
+          _attributes = {}
+
+          if len(_open.split(' ')) > 1: # if tag has attributes
+            _attributes = self._extract_attributes(_open.split(' ', 1)[1])
+          
+          _node = DOMNode(
+            type=_type,
+            attributes=_attributes
+          )
+
+          if _type not in self.self_closing_elements: # not self-closing, continue
+
+
+
+
+            
+            # search for close tag
+            # must have matched tags of same type within bounds of closing tag
+
+            # find first closing tag
+            _close_search_start = 0
+            _should_stop = False
+
+            while not _should_stop:
+              print(_should_stop)
+              _close_search = re.search(f'</{_type}>', DOM[_close_search_start:])
+
+              if _close_search:
+                _close_i, _close_f = _close_search.span()
+
+                _mid_open_search = re.search(f'<{_type} [^<>]*>', DOM[_close_search_start:])
+
+                if _mid_open_search:
+                  _close_search_start = _close_f
+                  # continue loop
+                else:
+                  self._parse_DOM(DOM[:_close_i], _node)    # parse children
+                  self._parse_DOM(DOM[_close_f:], parent)    # parse remainder
+
+                  _should_stop = True
+              
+              else:
+                self._parse_DOM(DOM, _node)
+
+                _should_stop = True
+
+
+
+
+
+          else:                           # self-closing
+            # continue with rest of DOM
+            self._parse_DOM(DOM, parent)
+            
+        else:                             # else remove treat beginning as text
+          _node = DOMNode(
+            type='text',
+            attributes={
+              'content': DOM[:_open_i]
+            }
+          )
+
+          # continue with rest of DOM
+          self._parse_DOM(DOM[_open_f:], parent)
+      else:                               # else treat all DOM as text
+        _node = DOMNode(
+          type='text',
+          attributes={
+            'content': DOM
+          }
+        )
+
+      if _node:
+        self._insert_typed_element(_node)
+
+        if parent:
+          parent.insert_child(_node)
+        else:
+          self.elements.insert_child(_node)
+
+
+  """
 
   def _parse_DOM(self, DOM: str, parent: Optional[DOMNode]=None):
     DOM = self._sanitize_whitespace(DOM)
@@ -163,8 +263,6 @@ class Parser:
 
             # parse DOM on children
             if _DOM_type == 'script':
-              print('script')
-              print(_children)
               _node.insert_attribute('script', _children)
             else:
               if _children != '':
@@ -173,3 +271,4 @@ class Parser:
         # parse rest of DOM string
         if DOM != '':
           self._parse_DOM(DOM, parent)
+  """
