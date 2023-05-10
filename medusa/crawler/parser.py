@@ -78,7 +78,7 @@ class Parser:
 
     return _attributes
 
-
+  """
   def _parse_DOM(self, DOM: str, parent: Optional[DOMNode]=None) -> None:
     _node = None
 
@@ -117,7 +117,7 @@ class Parser:
 
 
 
-            
+
             # search for close tag
             # must have matched tags of same type within bounds of closing tag
 
@@ -126,7 +126,7 @@ class Parser:
             _should_stop = False
 
             while not _should_stop:
-              print(_should_stop)
+              print(_close_search_start)
               _close_search = re.search(f'</{_type}>', DOM[_close_search_start:])
 
               if _close_search:
@@ -138,15 +138,16 @@ class Parser:
                   _close_search_start = _close_f
                   # continue loop
                 else:
+                  _should_stop = True
+
                   self._parse_DOM(DOM[:_close_i], _node)    # parse children
                   self._parse_DOM(DOM[_close_f:], parent)    # parse remainder
-
-                  _should_stop = True
               
               else:
-                self._parse_DOM(DOM, _node)
-
                 _should_stop = True
+
+                self._parse_DOM(DOM, _node)                 # parse children
+
 
 
 
@@ -182,7 +183,7 @@ class Parser:
         else:
           self.elements.insert_child(_node)
 
-
+  """
   """
 
   def _parse_DOM(self, DOM: str, parent: Optional[DOMNode]=None):
