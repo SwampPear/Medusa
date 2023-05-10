@@ -79,8 +79,25 @@ class Parser:
     return _attributes
   
 
+  def _create_node(
+    self,
+    type: str, 
+    attributes: dict, 
+    parent: Optional[DOMNode]=None
+  ) -> None:
+    _node = DOMNode(
+      type=type,
+      attributes=attributes
+    )
+
+    if parent:
+      parent.insert_child(_node)
+    else:
+      self.elements.insert_child(_node)
+  
+
   def _parse_DOM(self, DOM: str, parent: Optional[DOMNode]=None) -> None:
-    if DOM:
+    if DOM:                                       # if string is not empty
       # search for open tag
       _open_search = re.search('<[^<>]+>', DOM)
 
