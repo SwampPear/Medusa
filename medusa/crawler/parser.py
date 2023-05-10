@@ -77,6 +77,79 @@ class Parser:
       _attributes[_non_valued_attribute] = True
 
     return _attributes
+  
+
+  def _parse_DOM(self, DOM: str, parent: Optional[DOMNode]=None) -> None:
+    if DOM:
+      # search for open tag
+      _open_search = re.search('<[^<>]+>', DOM)
+
+      if _open_search:                            # open tag found
+        _open_i, _open_f = _open_search.span()
+        
+        if _open_i != 0:                          # text at start of string
+          _node = DOMNode(
+            type='text',
+            attributes={
+              'content': DOM[:_open_i]
+            }
+          )
+
+          if parent:
+            parent.insert_child(_node)
+          else:
+            self.elements.insert_child(_node)
+
+          DOM = DOM[_open_i:]
+
+          self._parse_DOM(DOM, parent)
+        else:                                     # element at start of string
+          _open = DOM[_open_i + 1:_open_f - 1]
+
+          # sanitize potential closing delimeter for self-closing tags
+          if _open[-1] == '/':
+            _open = _open[:-1]
+
+          # extract type and attributes
+          _type = _open.split(' ', 1)[0]
+
+          _attributes = {}
+
+          if _open.split(' ', 1) > 1:
+            _attributes = self._extract_attributes(_open.split(' ', 1)[1])
+
+          # remove open tag from dom
+          DOM = DOM[_open_f:]
+
+          if _type in self.self_closing_elements:  # element is self-closing
+            _node = DOMNode(
+              type=_type,
+              attributes=_attributes
+            )
+
+            if parent:
+              parent.insert_child(_node)
+            else:
+              self.elements.insert_child(_node)
+
+            # continue with remainder
+            self._parse_DOM(DOM, parent)
+          else:                                   # element is not self-closing
+            pass
+      else:                                       # open tag not found
+        # everything treated as text
+        _node = DOMNode(
+          type='text',
+          attributes={
+            'content': DOM
+          }
+        )
+
+        if parent:
+          parent.insert_child(_node)
+        else:
+          self.elements.insert_child(_node)
+      
 
   """
   def _parse_DOM(self, DOM: str, parent: Optional[DOMNode]=None) -> None:
