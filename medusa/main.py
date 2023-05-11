@@ -14,12 +14,10 @@ import re
 if __name__ == '__main__':
   _app = App()
   _app.run()
-  #<td\s*.*>\s*.*<\/td>
-  text = '<div><div class="one">Testing one</div><div class="two">Testing two</div></div>'
 
-  a = requests.get('http://127.0.0.1:8000')#'https://www.blackdogcustoms.com')
+  #a = requests.get('http://127.0.0.1:8000')
+  a = requests.get('https://www.blackdogcustoms.com')
+
   b = Parser(a)
-  print(b.elements)
 
-  #for el in b.typed_elements:
-  #  print(el)
+  print(b.typed_elements['a'][0])
