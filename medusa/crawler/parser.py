@@ -218,4 +218,11 @@ class Parser:
           },
           parent=parent
         )
+
+  
+  def get_elements_by_type(self, type: str) -> DOMNode:
+    try:
+      return self.typed_elements[type]
+    except:
+      return []
       

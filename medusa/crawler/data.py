@@ -23,8 +23,9 @@ class DOMNode:
   def insert_child(self, child: 'DOMNode') -> None:
     self._children.append(child)
 
-  
-  def insert_attribute(self, key: str, value):
-    #self._attributes[key] = value
-    print(key)
-    print(value)
+
+  def get_attribute(self, attribute: str) -> str:
+    try:
+      return self._attributes[attribute]
+    except:
+      return None
