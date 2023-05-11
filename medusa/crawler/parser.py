@@ -7,7 +7,7 @@ from time import sleep
 
 
 class Parser:
-  def __init__(self, response: Response, text) -> None:
+  def __init__(self, response: Response) -> None:
     self.self_closing_elements = [
       'area',
       'base',
@@ -34,11 +34,13 @@ class Parser:
     self.elements = DOMNode(type='dom_tree')
     self.typed_elements = {}
 
-    self._parse_DOM(self._sanitize_DOM(text))
+    self._parse_DOM(self._sanitize_DOM(response.text))
 
   
   def _sanitize_DOM(self, DOM) -> None:
-    _out = DOM.replace('\n', '')
+    _out = DOM.replace('\n', '')         # remove new lines
+    _out = re.sub('\s+<', '<', _out)     # remove whitespace befor caret delimeter
+    _out = re.sub('>\s+', '>',_out)      # remove whitespace after caret delimeter
 
     return _out
   

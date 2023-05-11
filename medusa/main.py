@@ -18,13 +18,7 @@ if __name__ == '__main__':
   text = '<div><div class="one">Testing one</div><div class="two">Testing two</div></div>'
 
   a = requests.get('http://127.0.0.1:8000')#'https://www.blackdogcustoms.com')
-  #b = Parser(a, text)
-
-  #print(b.elements)
-
-
-  a = requests.get('http://127.0.0.1:8000')#'https://www.blackdogcustoms.com')
-  b = Parser(a, text)
+  b = Parser(a)
   print(b.elements)
 
   #for el in b.typed_elements:
