@@ -3,10 +3,11 @@ import re
 from requests import Response
 from medusa.crawler.data import DOMNode
 from xml.dom.minidom import parseString
+from time import sleep
 
 
 class Parser:
-  def __init__(self, response: Response) -> None:
+  def __init__(self, response: Response, text) -> None:
     self.self_closing_elements = [
       'area',
       'base',
@@ -33,7 +34,7 @@ class Parser:
     self.elements = DOMNode(type='dom_tree')
     self.typed_elements = {}
 
-    self._parse_DOM(self._sanitize_DOM(response.text))
+    self._parse_DOM(self._sanitize_DOM(text))
 
   
   def _sanitize_DOM(self, DOM) -> None:
@@ -95,6 +96,19 @@ class Parser:
     else:
       self.elements.insert_child(_node)
 
+    return _node
+
+  
+  def _insert_node(
+    self,
+    node: DOMNode,
+    parent: Optional[DOMNode]=None
+  ) -> None:
+    if parent:
+      parent.insert_child(node)
+    else:
+      self.elements.insert_child(node)
+
 
   def _parse_open_tag(self, open: str) -> Tuple[str, dict]:
     # remove carat delimeters
@@ -108,10 +122,200 @@ class Parser:
     _type = open.split(' ', 1)[0]
     _attributes = {}
 
-    if open.split(' ', 1) > 1:
+    if len(open.split(' ', 1)) > 1:
       _attributes = self._extract_attributes(open.split(' ', 1)[1])
 
     return (_type, _attributes)
+  
+  """
+  def _parse_non_self_closing_tag(
+    self,
+    DOM: str,
+    type: str, 
+    attributes: dict, 
+    parent: Optional[DOMNode]
+  ) -> None:
+    # <div><div></div><div></div></div>
+    _should_stop = False
+
+    _close_search_i = 0
+    _mid_search_i = 0
+
+    while not _should_stop:
+      sleep(2)
+      _close_search = re.search(f'</{type}>', DOM[_close_search_i:])
+
+      if _close_search:                           # close tag found
+        _close_i, _close_f = _close_search.span()
+
+        _mid_search = re.search(f'<{type}[^<>]*>', DOM[_mid_search_i:])
+
+        print('Close found')
+        print(type)
+        print(attributes)
+        print(_close_i, _close_f)
+        
+
+        if _mid_search:
+          _close_search_i = _close_search_i + _close_f
+          _mid_search_i = _mid_search_i + _mid_search.span()[1]
+          print('Mid found')
+          print(_mid_search_i)
+          print(_mid_search.group())
+          print(_close_search_i)
+          print(_close_search.group())
+          print(f'Mid: {DOM[_mid_search_i:]}')
+          print(f'Close: {DOM[_close_search_i:]}')
+          print()
+        else:                                     # end loop
+          print('No Mid Found')
+          print(f'Children: {DOM[:_close_search_i]}')
+          print(f'Remainder: {DOM[_close_search_i + _close_f:]}')
+          print()
+          _should_stop = True
+          
+          # create node and parse children
+          _node = self._create_node(
+            type=type,
+            attributes=attributes,
+            parent=parent
+          )
+
+          # parse children
+          self._parse_DOM(DOM[:_close_search_i], _node)
+
+          # parse rest of dOM
+          self._parse_DOM(DOM[_close_search_i + _close_f:], parent)
+
+      else:                                       # close tag not found
+        _should_stop = True
+
+        # parse rest as child
+        
+        print('Close not found')
+        print(DOM)
+        print(type)
+        print(attributes)
+        print()
+        
+        _node = self._create_node(
+          type=type,
+          attributes=attributes,
+          parent=parent
+        )
+
+        self._parse_DOM(DOM, _node)
+  """
+
+  def _parse_non_self_closing_tag(
+    self,
+    DOM: str,
+    type: str, 
+    attributes: dict, 
+    parent: Optional[DOMNode]
+  ) -> None:
+    Z  = '<div class="container"><div class="one"></div><div class="two"></div></div>'
+    ZR = '<div class="one"></div><div class="two"></div></div>'
+    A  = '<div class="one"><div class="inner"></div></div><div class="two"></div>'
+    AR = '</div><div class="two"></div>'
+    B  = '<div class="two"></div>'
+    BR = '</div>'
+    C  = ''
+
+    _stop = False
+
+    _cls_i, _cls_f = 0, 0
+    _mid_i, _mid_f = 0, 0
+
+    # look for close, update close search i
+    # if close, look for mid between mid i and close i
+    # if mid, update mid_search and close_search
+    
+    while not _stop:
+      _cls_search = re.search(f'</{type}>', DOM[_cls_f:])
+
+      if _cls_search:
+        _cls_i = _cls_search.span()[0] + _cls_f
+        _cls_f = _cls_search.span()[1] + _cls_f
+
+        _mid_search = re.search(f'<{type}[^<>]*>', DOM[_mid_f:_cls_i])
+
+        if _mid_search:
+          print('sadf')
+          _mid_i = _mid_search.span()[0] + _mid_f
+          _mid_f = _mid_search.span()[1] + _mid_f
+        else:
+          print(DOM[_cls_i:])
+          _stop = True
+
+          # parse children
+          _node = self._create_node(
+            type,
+            attributes,
+            parent
+          )
+
+          self._parse_DOM(DOM[:_cls_i], _node)
+
+          # parse remainder
+          self._parse_DOM(DOM[_cls_f:], parent)
+      else:
+        print('ds')
+        _stop = True
+      
+    """
+    while not _should_stop:
+      sleep(2)
+      _close_search = re.search(f'</{type}>', DOM[_close_search_i:])
+
+      if _close_search:                           # close tag found
+        _close_i, _close_f = _close_search.span()
+
+        _mid_search = re.search(f'<{type}[^<>]*>', DOM[_mid_search_i:])
+
+        if _mid_search:
+          _close_search_i = _close_search_i + _close_f
+          _mid_search_i = _mid_search_i + _mid_search.span()[1]
+          print('Mid found')
+          print(_mid_search_i)
+          print(_mid_search.group())
+          print(_close_search_i)
+          print(_close_search.group())
+          print(f'Mid: {DOM[_mid_search_i:]}')
+          print(f'Close: {DOM[_close_search_i:]}')
+          print()
+        else:                                     # end loop
+          print('No Mid Found')
+          print(f'Children: {DOM[:_close_search_i]}')
+          print(f'Remainder: {DOM[_close_search_i + _close_f:]}')
+          print()
+          _should_stop = True
+          
+          # create node and parse children
+          _node = self._create_node(
+            type=type,
+            attributes=attributes,
+            parent=parent
+          )
+
+          # parse children
+          self._parse_DOM(DOM[:_close_search_i], _node)
+
+          # parse rest of dOM
+          self._parse_DOM(DOM[_close_search_i + _close_f:], parent)
+
+      else:                                       # close tag not found
+        _should_stop = True
+
+        # parse rest as child
+        _node = self._create_node(
+          type=type,
+          attributes=attributes,
+          parent=parent
+        )
+
+        self._parse_DOM(DOM, _node)
+  """
   
 
   def _parse_DOM(self, DOM: str, parent: Optional[DOMNode]=None) -> None:
@@ -127,7 +331,8 @@ class Parser:
             type='text',
             attributes={
               'content': DOM[:_open_i]
-            }
+            },
+            parent=parent
           )
 
           # parse with remainder of DOM after text
@@ -136,22 +341,26 @@ class Parser:
           _type, _attributes = self._parse_open_tag(DOM[_open_i:_open_f])
 
           if _type in self.self_closing_elements:  # element is self-closing
-            self._create_node(
-              type=_type,
-              attributes=_attributes
-            )
+            self._create_node(_type, _attributes, parent)
 
             # parse with remainder of DOM after self-closing tag
             self._parse_DOM(DOM[_open_f:], parent)
           else:                                   # element is not self-closing
-            pass
+            self._parse_non_self_closing_tag(
+              DOM[_open_f:],
+              _type,
+              _attributes,
+              parent
+            )
+
       else:                                       # open tag not found
         # everything treated as text
         self._create_node(
           type='text',
           attributes={
             'content': DOM
-          }
+          },
+          parent=parent
         )
       
 
