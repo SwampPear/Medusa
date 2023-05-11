@@ -17,11 +17,12 @@ if __name__ == '__main__':
 
   #a = requests.get('http://127.0.0.1:8000')
   a = requests.get('https://www.six-group.com/en/home.html')
-  print(a.text)
+  #print(a.text)
 
   b = Parser(a)
-  print(b.elements)
 
-  #for el in b.get_elements_by_type('meta'):
-    #print(el)
-    #print(el.get_attribute('href'))
+  for el in b.get_elements_by_type('a'):
+    print(el.get_attribute('href'))
+
+
+  # https://www.six-group.com/en/home.html#

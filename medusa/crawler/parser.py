@@ -23,7 +23,8 @@ class Parser:
       'source',
       'track',
       'wbr',
-      '!DOCTYPE'
+      '!DOCTYPE',
+      '!--'
     ]
 
     self.status = response.status_code
@@ -157,6 +158,7 @@ class Parser:
         if _mid_search:
           _mid_f = _mid_search.span()[1] + _mid_f
         else:
+          #DOM[:_cls_i])
           _stop = True
 
           # parse children
@@ -172,6 +174,16 @@ class Parser:
           self._parse_DOM(DOM[_cls_f:], parent)
       else:
         _stop = True
+
+        # treat reamainder as child
+        _node = self._create_node(
+          type,
+          attributes,
+          parent
+        )
+
+        self._parse_DOM(DOM, _node)
+
   
 
   def _parse_DOM(self, DOM: str, parent: Optional[DOMNode]=None) -> None:
