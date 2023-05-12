@@ -27,6 +27,11 @@ class Parser:
       '!--'
     ]
 
+    self.non_DOM_parents = [
+      'script',
+      'svg'
+    ]
+
     self.status = response.status_code
     self.headers = response.headers
     self.cookies = response.cookies
@@ -142,15 +147,19 @@ class Parser:
     attributes: dict, 
     parent: Optional[DOMNode]
   ) -> None:
-    if type == 'script':
-      _cls_search = re.search(f'</{type}>', DOM)
+    ########### ########### ########### ########### ########### ########### ###########
+    if type in self.non_DOM_parents:
+      if type == '!--':
+        _cls_search = re.search(f'-->', DOM)
+      else:
+        _cls_search = re.search(f'</{type}>', DOM)
 
       if _cls_search:
         _cls_i, _cls_f = _cls_search.span()
 
         # create node and parse remainder of document
         _node = self._create_node(
-          type='script',
+          type=type,
           attributes={
             'content': DOM[:_cls_i]
           },
@@ -161,12 +170,13 @@ class Parser:
       else:
         # treat everything as script
         _node = self._create_node(
-          type='script',
+          type=type,
           attributes={
             'content': DOM
           },
           parent=parent
         )
+    ########### ########### ########### ########### ########### ########### ###########
     else:
       _stop = False
 
