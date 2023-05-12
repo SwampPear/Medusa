@@ -80,7 +80,6 @@ class Parser:
     for _non_valued_attribute in _non_valued_attributes:
       _attributes[_non_valued_attribute] = True
 
-    print(_attributes)
     return _attributes
   
 
