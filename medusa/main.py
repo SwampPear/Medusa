@@ -16,13 +16,10 @@ if __name__ == '__main__':
   _app.run()
 
   #a = requests.get('http://127.0.0.1:8000')
-  a = requests.get('https://www.six-group.com/en/home.html')
+  a = requests.get('https://www.blackdogcustoms.com')
   #print(a.text)
 
   b = Parser(a)
 
   for el in b.get_elements_by_type('a'):
     print(el.get_attribute('href'))
-
-
-  # https://www.six-group.com/en/home.html#

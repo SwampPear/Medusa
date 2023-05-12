@@ -57,13 +57,13 @@ class Parser:
     _attributes = {}
 
     # extract valued attributes
-    _valued_attributes = re.findall(re.compile(r'[^"\s]*="[^"]*"'), DOM)
+    _valued_attributes = re.findall('[^"\s]*="[^"]*"|[^\'\s]*=\'[^\']*\'', DOM)
 
     # extract non valued attributes
     _non_valued_attributes = []
 
     for _valued_attribute in _valued_attributes:
-      DOM = re.sub(_valued_attribute, '', DOM)
+      DOM = DOM.replace(_valued_attribute, '')
 
     for _non_valued_attribute in DOM.split(' '):
       if _non_valued_attribute != '':
@@ -72,7 +72,7 @@ class Parser:
     # format valued attributes
     for _valued_attribute in _valued_attributes:
       _attribute_name = _valued_attribute.split('=', 1)[0]
-      _attribute_value = _valued_attribute.split('=', 1)[1].replace('"', '')
+      _attribute_value = _valued_attribute.split('=', 1)[1][1:-1]
 
       _attributes[_attribute_name] = _attribute_value
 
@@ -80,6 +80,7 @@ class Parser:
     for _non_valued_attribute in _non_valued_attributes:
       _attributes[_non_valued_attribute] = True
 
+    print(_attributes)
     return _attributes
   
 
@@ -142,47 +143,73 @@ class Parser:
     attributes: dict, 
     parent: Optional[DOMNode]
   ) -> None:
-    _stop = False
-
-    _cls_i, _cls_f, _mid_f = 0, 0, 0
-    
-    while not _stop:
-      _cls_search = re.search(f'</{type}>', DOM[_cls_f:])
+    if type == 'script':
+      _cls_search = re.search(f'</{type}>', DOM)
 
       if _cls_search:
-        _cls_i = _cls_search.span()[0] + _cls_f
-        _cls_f = _cls_search.span()[1] + _cls_f
+        _cls_i, _cls_f = _cls_search.span()
 
-        _mid_search = re.search(f'<{type}[^<>]*>', DOM[_mid_f:_cls_i])
+        # create node and parse remainder of document
+        _node = self._create_node(
+          type='script',
+          attributes={
+            'content': DOM[:_cls_i]
+          },
+          parent=parent
+        )
 
-        if _mid_search:
-          _mid_f = _mid_search.span()[1] + _mid_f
+        self._parse_DOM(DOM[_cls_f:], parent)
+      else:
+        # treat everything as script
+        _node = self._create_node(
+          type='script',
+          attributes={
+            'content': DOM
+          },
+          parent=parent
+        )
+    else:
+      _stop = False
+
+      _cls_i, _cls_f, _mid_f = 0, 0, 0
+      
+      while not _stop:
+        _cls_search = re.search(f'</{type}>', DOM[_cls_f:])
+
+        if _cls_search:
+          _cls_i = _cls_search.span()[0] + _cls_f
+          _cls_f = _cls_search.span()[1] + _cls_f
+
+          _mid_search = re.search(f'<{type}[^<>]*>', DOM[_mid_f:_cls_i])
+
+          if _mid_search:
+            _mid_f = _mid_search.span()[1] + _mid_f
+          else:
+            #DOM[:_cls_i])
+            _stop = True
+
+            # parse children
+            _node = self._create_node(
+              type,
+              attributes,
+              parent
+            )
+
+            self._parse_DOM(DOM[:_cls_i], _node)
+
+            # parse remainder
+            self._parse_DOM(DOM[_cls_f:], parent)
         else:
-          #DOM[:_cls_i])
           _stop = True
 
-          # parse children
+          # treat reamainder as child
           _node = self._create_node(
             type,
             attributes,
             parent
           )
 
-          self._parse_DOM(DOM[:_cls_i], _node)
-
-          # parse remainder
-          self._parse_DOM(DOM[_cls_f:], parent)
-      else:
-        _stop = True
-
-        # treat reamainder as child
-        _node = self._create_node(
-          type,
-          attributes,
-          parent
-        )
-
-        self._parse_DOM(DOM, _node)
+          self._parse_DOM(DOM, _node)
 
   
 
