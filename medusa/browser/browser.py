@@ -119,7 +119,7 @@ class Browser:
   
 
   def go_to_url(self, url) -> dict:
-    return self._execute_command(
+    self._execute_command(
       'url', 
       type='POST', 
       body = {

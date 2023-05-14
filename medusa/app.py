@@ -5,7 +5,8 @@ from time import sleep
 
 class App:
   def __init__(self) -> None:
-    self.browser = Browser()
+    #self.browser = Browser()
+    self.browser = None
 
   
   def _print_welcome(self) -> None:
@@ -17,26 +18,16 @@ class App:
         ' / /  / / /___/ /_/ / /_/ /___/ / ___ |',
         '/_/  /_/_____/_____/\____//____/_/  |_|',
         '@swamppear',
-        'v0.0.1'
+        'v0.0.2'
       ]), 
       color=Color.GREEN, 
       bold=True
-    )
-    CLI.write()
-    CLI.write(
-      '\n'.join([
-        'Usage:',
-        ' --- <command> --help',
-        ' --- crawl <url> (IN PROGRESS)',
-        ' --- fuzz <url> <flags> (NOT IMPLEMENTED)'
-      ]), 
-      color=Color.GREEN
     )
 
 
   def run(self) -> None:
     self._print_welcome()
 
-    self.browser.go_to_url('https://www.google.com')
-    sleep(100)
-    self.browser.exit()
+    #self.browser.go_to_url('https://www.google.com')
+    #sleep(10)
+    #self.browser.exit()
