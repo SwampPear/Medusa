@@ -5,7 +5,7 @@ from time import sleep
 
 class App:
   def __init__(self) -> None:
-    pass
+    self.browser = Browser()
 
   
   def _print_welcome(self) -> None:
@@ -22,9 +22,7 @@ class App:
       color=Color.GREEN, 
       bold=True
     )
-
     CLI.write()
-
     CLI.write(
       '\n'.join([
         'Usage:',
@@ -39,11 +37,6 @@ class App:
   def run(self) -> None:
     self._print_welcome()
 
-
-                                       
-  """
-  def run(self) -> None:
     self.browser.go_to_url('https://www.google.com')
     sleep(100)
     self.browser.exit()
-  """

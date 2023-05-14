@@ -1,2 +1,2 @@
-1) allow parser to account for scripts
-2) allow parser to account for comments
+1) implement proxy
+2) implement headless variant of chrome

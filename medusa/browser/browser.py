@@ -26,14 +26,13 @@ class Browser:
     self.session_id = self._get_session_id()
 
 
-  def _fmt_url(self, session_id: bool=False, command: Optional[str]=None) -> str:
+  def _fmt_url(self, session_id: bool=False, command: str='/') -> str:
     _url = f'{ADDRESS}/session'
 
     if session_id:
       _url += f'/{self.session_id}'
 
-      if command:
-        _url += f'/{command}'
+      _url += command
 
     return _url
 
@@ -82,8 +81,7 @@ class Browser:
 
 
   def _quit_browser(self) -> None:
-    _url = self._fmt_url(session_id=True)
-    requests.delete(_url)
+    requests.delete(self._fmt_url(session_id=True))
 
 
   def exit(self) -> None:
@@ -97,11 +95,11 @@ class Browser:
     type: str, 
     body: Optional[dict]=None
   ) -> dict:
-    if type == 'get':
+    if type == 'GET':
       return requests.get(
         self._fmt_url(session_id=True, command=command)
       ).json()
-    elif type == 'post':
+    elif type == 'POST':
       return requests.post(
         self._fmt_url(session_id=True, command=command),
         json=body
@@ -109,21 +107,21 @@ class Browser:
 
 
   def get_current_window_handle(self) -> dict:
-    return self._execute_command('window_handle', type='get')['value']
+    return self._execute_command('window_handle', type='GET')['value']
   
 
   def get_available_window_handles(self) -> dict:
-    return self._execute_command('window_handles', type='get')['value']
+    return self._execute_command('window_handles', type='GET')['value']
   
 
   def get_current_url(self) -> dict:
-    return self._execute_command('url', type='get')['value']
+    return self._execute_command('url', type='GET')['value']
   
 
   def go_to_url(self, url) -> dict:
-    self._execute_command(
+    return self._execute_command(
       'url', 
-      type='post', 
+      type='POST', 
       body = {
         'url': url
       }
@@ -131,15 +129,15 @@ class Browser:
 
   
   def forward(self) -> dict:
-    self._execute_command('forward', type='post')
+    return self._execute_command('forward', type='POST')
 
   
   def back(self) -> dict:
-    self._execute_command('back', type='post')
+    return self._execute_command('back', type='POST')
 
 
   def refresh(self) -> dict:
-    self._execute_command('refresh', type='post')
+    return self._execute_command('refresh', type='POST')
 
   
 

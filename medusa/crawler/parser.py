@@ -147,7 +147,6 @@ class Parser:
     attributes: dict, 
     parent: Optional[DOMNode]
   ) -> None:
-    ########### ########### ########### ########### ########### ########### ###########
     if type in self.non_DOM_parents:
       if type == '!--':
         _cls_search = re.search(f'-->', DOM)
@@ -176,7 +175,6 @@ class Parser:
           },
           parent=parent
         )
-    ########### ########### ########### ########### ########### ########### ###########
     else:
       _stop = False
 
