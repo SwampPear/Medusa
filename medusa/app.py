@@ -18,15 +18,26 @@ class App:
         ' / /  / / /___/ /_/ / /_/ /___/ / ___ |',
         '/_/  /_/_____/_____/\____//____/_/  |_|',
         '@swamppear',
-        'v0.0.2'
+        'v0.0.2',
+        ''
       ]), 
-      color=Color.GREEN, 
+      color=Color.GREEN,
       bold=True
     )
 
 
   def run(self) -> None:
+    # red is danger
+    # green is success
+    # yellow is warning
+    # delimteres magenta
+    # cyan is informational
     self._print_welcome()
+
+    while True:
+      CLI.write(' ~ ', color=Color.MAGENTA, bold=True, end='')
+      _input = CLI.read()
+      print(_input)
 
     #self.browser.go_to_url('https://www.google.com')
     #sleep(10)

@@ -17,7 +17,22 @@ class Color:
   WHITE = '\u001b[37m'
 
 class CLI:
-  def write(text: str='\n', color: Optional[str]=None, bold: bool=False) -> None:
+  def write(
+    text: str='', 
+    color: Optional[str]=None, 
+    bold: bool=False, 
+    end: str='\n'
+  ) -> None:
+    if color:
+      text = f'{color}{text}'
+
+    if bold:
+      text = f'\033[1m{text}'
+
+    text = f'{text}\033[0m{end}'
+
+
+    """
     _out = text
 
     if color:
@@ -27,9 +42,10 @@ class CLI:
       _out = f'\033[1m{_out}'
 
     if _out != '\n':
-      _out = f'{_out}\033[0m\n'
+      _out = f'{_out}\033[0m{end}'
 
-    sys.stdout.write(_out)
+    """
+    sys.stdout.write(text)
     sys.stdout.flush()
 
   def read(begin: str=''):
