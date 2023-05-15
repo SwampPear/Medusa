@@ -15,7 +15,8 @@ class App:
     _command = _args[0].lower()
 
     if _command == 'exit': self._exit()
-    elif _command == 'clear': self._cli.clear()
+    elif _command == 'clear': self._clear()
+    else: self._invalid(_command)
 
 
   def _exit(self) -> None:
@@ -23,6 +24,14 @@ class App:
 
     self._cli.write('Medusa terminated.', Color.INFO, True)
     sys.exit(0)
+
+  
+  def _clear(self) -> None:
+    self._cli.clear()
+
+  
+  def _invalid(self, command: str) -> None:
+    self._cli.write(f'Invalid command: {command}', Color.DANGER, True)
 
 
   def run(self) -> None:
