@@ -1,58 +1,65 @@
 from typing import Optional
 import sys
 
+
 class Color:
-  GREEN = '\u001b[32m'
+  SUCCESS = '\u001b[32m'
+  DANGER = '\u001b[31m'
+  WARNING = '\u001b[33m'
+  INFO = '\u001b[36m'
+  DELIMITER = '\u001b[35m'
 
-
-
-
-  BLACK = '\u001b[30m'
-  RED = '\u001b[31m'
-
-  YELLOW = '\u001b[33m'
-  BLUE = '\u001b[34m'
-  MAGENTA = '\u001b[35m'
-  CYAN = '\u001b[36m'
-  WHITE = '\u001b[37m'
 
 class CLI:
+  def __init__(self) -> None:
+    self.write(
+      '\n'.join([
+        '    __  _____________  __  _______ ___ ',
+        '   /  |/  / ____/ __ \/ / / / ___//   |',
+        '  / /|_/ / __/ / / / / / / /\__ \/ /| |',
+        ' / /  / / /___/ /_/ / /_/ /___/ / ___ |',
+        '/_/  /_/_____/_____/\____//____/_/  |_|',
+        '@swamppear',
+        'v0.0.2',
+        ''
+      ]), 
+      Color.DELIMITER, 
+      True,
+      count=False
+    )
+
+    self.row = 0
+
+
   def write(
+    self,
     text: str='', 
     color: Optional[str]=None, 
     bold: bool=False, 
-    end: str='\n'
+    end: str='\n',
+    count: bool=True 
   ) -> None:
-    if color:
-      text = f'{color}{text}'
-
-    if bold:
-      text = f'\033[1m{text}'
+    if color: text = f'{color}{text}'
+    if bold: text = f'\033[1m{text}'
 
     text = f'{text}\033[0m{end}'
 
-
-    """
-    _out = text
-
-    if color:
-      _out = f'{color}{_out}'
-
-    if bold:
-      _out = f'\033[1m{_out}'
-
-    if _out != '\n':
-      _out = f'{_out}\033[0m{end}'
-
-    """
     sys.stdout.write(text)
     sys.stdout.flush()
 
-  def read(begin: str=''):
+    if count:
+      self.row += 1
+
+
+  def read(
+    self,
+    begin: str='', 
+    color: Optional[str]=None, 
+    bold: bool=False
+  ) -> str:
     text = ''
 
-    sys.stdout.write(begin)
-    sys.stdout.flush()
+    self.write(begin, color, bold, end='')
 
     while True:
       char = ord(sys.stdin.read(1))
@@ -60,3 +67,11 @@ class CLI:
       if char == 3: return
       elif char in (10, 13): return text
       else: text += chr(char)
+
+
+  def clear(self) -> None:
+    sys.stdout.write(f'\u001b[{self.row}F')
+    sys.stdout.write('\u001b[0J')
+    sys.stdout.flush()
+
+    self.row = 0
