@@ -75,8 +75,6 @@ class CLI:
 
 
   def clear(self) -> None:
-    sys.stdout.write(f'\u001b[{self.row_count}F')
-    sys.stdout.write('\u001b[0J')
-    sys.stdout.flush()
-
+    # move up n lines and clear from cursor on
+    self.write(f'\u001b[{self.row_count}F\u001b[0J', end='', count=False)
     self.row_count = 0
