@@ -18,12 +18,19 @@ class CLI:
         '   /  |/  / ____/ __ \/ / / / ___//   |',
         '  / /|_/ / __/ / / / / / / /\__ \/ /| |',
         ' / /  / / /___/ /_/ / /_/ /___/ / ___ |',
-        '/_/  /_/_____/_____/\____//____/_/  |_|',
+        '/_/  /_/_____/_____/\____//____/_/  |_|'
+      ]), 
+      Color.DELIMITER, 
+      True,
+      count=False
+    )
+    self.write(
+      '\n'.join([
         '@swamppear',
         'v0.0.2',
         ''
       ]), 
-      Color.DELIMITER, 
+      Color.SUCCESS, 
       True,
       count=False
     )

@@ -5,18 +5,17 @@ from medusa.cli import CLI, Color
 
 class App:
   def __init__(self) -> None:
-    #self.browser = Browser()
     self._browser = None
     self._cli = CLI()
 
   
   def _execute_command(self, input: str) -> None:
     _args = input.split(' ')
-    _command = _args[0].lower()
+    _cmd = _args[0].lower()
 
-    if _command == 'exit': self._exit()
-    elif _command == 'clear': self._clear()
-    else: self._invalid(_command)
+    if _cmd == 'exit': self._exit()
+    elif _cmd == 'clear': self._clear()
+    else: self._invalid(_cmd)
 
 
   def _exit(self) -> None:
