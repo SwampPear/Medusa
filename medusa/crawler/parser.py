@@ -1,61 +1,33 @@
 from typing import Optional, Tuple
 import re
 from requests import Response
-from medusa.crawler.data import DOMNode
-from xml.dom.minidom import parseString
-from time import sleep
+from medusa.crawler.algorithm import Node
+from medusa.crawler.constants import SELF_CLOSING_ELEMENTS, NON_DOM_PARENTS
 
 
 class Parser:
   def __init__(self, response: Response) -> None:
-    self.self_closing_elements = [
-      'area',
-      'base',
-      'br',
-      'col',
-      'embed',
-      'hr',
-      'img',
-      'input',
-      'link',
-      'meta',
-      'param',
-      'source',
-      'track',
-      'wbr',
-      '!DOCTYPE',
-      '!--'
-    ]
-
-    self.non_DOM_parents = [
-      'script',
-      'svg'
-    ]
-
     self.status = response.status_code
     self.headers = response.headers
     self.cookies = response.cookies
     self.raw_text = response.text
 
-    self.elements = DOMNode(type='dom_tree')
-    self.typed_elements = {}
+    self.tree = Node(type='dom_tree')
+    self.elements = {}
 
     self._parse_DOM(self._sanitize_DOM(response.text))
 
-  
-  def _sanitize_DOM(self, DOM) -> None:
-    _out = DOM.replace('\n', '')         # remove new lines
-    _out = re.sub('\s+<', '<', _out)     # remove whitespace befor caret delimeter
-    _out = re.sub('>\s+', '>',_out)      # remove whitespace after caret delimeter
 
-    return _out
-  
+  def _sanitize_DOM(self, DOM: str) -> str:
+    DOM = DOM.replace('\n', '')
+    DOM = re.sub('\s+<', '<', DOM)
+    DOM = re.sub('>\s+', '>', DOM)
 
-  def _insert_typed_element(self, element: DOMNode) -> None:
-    if element.type not in self.typed_elements.keys():
-      self.typed_elements[element.type] = []
+    return DOM
 
-    self.typed_elements[element.type].append(element)
+
+  def _insert_element(self, element: Node) -> None:
+    self.elements.setdefault(element.type, []).append(element)
 
 
   def _extract_attributes(self, DOM: str) -> dict:
@@ -92,34 +64,34 @@ class Parser:
     self,
     type: str, 
     attributes: dict, 
-    parent: Optional[DOMNode]=None
+    parent: Optional[Node]=None
   ) -> None:
-    _node = DOMNode(
+    _node = Node(
       type=type,
       attributes=attributes
     )
 
-    self._insert_typed_element(_node)
+    self._insert_element(_node)
 
     if parent:
       parent.insert_child(_node)
     else:
-      self.elements.insert_child(_node)
+      self.tree.insert_child(_node)
 
     return _node
 
   
   def _insert_node(
     self,
-    node: DOMNode,
-    parent: Optional[DOMNode]=None
+    node: Node,
+    parent: Optional[Node]=None
   ) -> None:
-    self._insert_typed_element(node)
+    self._insert_element(node)
 
     if parent:
       parent.insert_child(node)
     else:
-      self.elements.insert_child(node)
+      self.tree.insert_child(node)
 
 
   def _parse_open_tag(self, open: str) -> Tuple[str, dict]:
@@ -145,9 +117,9 @@ class Parser:
     DOM: str,
     type: str, 
     attributes: dict, 
-    parent: Optional[DOMNode]
+    parent: Optional[Node]
   ) -> None:
-    if type in self.non_DOM_parents:
+    if type in NON_DOM_PARENTS:
       if type == '!--':
         _cls_search = re.search(f'-->', DOM)
       else:
@@ -220,7 +192,7 @@ class Parser:
 
   
 
-  def _parse_DOM(self, DOM: str, parent: Optional[DOMNode]=None) -> None:
+  def _parse_DOM(self, DOM: str, parent: Optional[Node]=None) -> None:
     if DOM:                                       # if string is not empty
       # search for open tag
       _open_search = re.search('<[^<>]+>', DOM)
@@ -242,7 +214,7 @@ class Parser:
         else:                                     # element at start of string
           _type, _attributes = self._parse_open_tag(DOM[_open_i:_open_f])
 
-          if _type in self.self_closing_elements:  # element is self-closing
+          if _type in SELF_CLOSING_ELEMENTS:  # element is self-closing
             self._create_node(_type, _attributes, parent)
 
             # parse with remainder of DOM after self-closing tag
@@ -266,9 +238,9 @@ class Parser:
         )
 
   
-  def get_elements_by_type(self, type: str) -> DOMNode:
+  def get_elements_by_type(self, type: str) -> Node:
     try:
-      return self.typed_elements[type]
+      return self.elements[type]
     except:
       return []
       

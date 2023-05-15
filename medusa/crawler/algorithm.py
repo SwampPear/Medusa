@@ -1,8 +1,9 @@
-class DOMNode:
+class Node:
   def __init__(self, type: str, attributes: dict={}) -> None:
     self.type = type
     self.attributes = attributes
     self.children = []
+
 
   def __str__(self) -> str:
     children = [str(child) for child in self.children]
@@ -10,8 +11,10 @@ class DOMNode:
     
     return output
 
-  def insert_child(self, child: 'DOMNode') -> None:
+
+  def insert_child(self, child: 'Node') -> None:
     self.children.append(child)
+
 
   def get_attribute(self, attribute: str) -> str:
     return self.attributes.get(attribute, None)
