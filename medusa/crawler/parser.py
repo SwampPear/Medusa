@@ -31,56 +31,43 @@ class Parser:
 
 
   def _extract_attributes(self, DOM: str) -> dict:
-    _attributes = {}
+    attrs = {}
 
-    # extract valued attributes
-    _valued_attributes = re.findall('[^"\s]*="[^"]*"|[^\'\s]*=\'[^\']*\'', DOM)
+    # extract and remove non-empty attributes
+    non_empty_attrs = re.findall('[^"\s]*="[^"]*"|[^\'\s]*=\'[^\']*\'', DOM)
+    for attr in non_empty_attrs: DOM = DOM.replace(attr, '')
 
-    # extract non valued attributes
-    _non_valued_attributes = []
+    # extract empty attributes
+    empty_attrs = [attr for attr in DOM.split(' ') if attr]
 
-    for _valued_attribute in _valued_attributes:
-      DOM = DOM.replace(_valued_attribute, '')
+    # format non-empty attributres
+    for attr in non_empty_attrs:
+      attr_name, attr_value = attr.split('=', 1)
+      attrs[attr_name] = attr_value[1:-1]
 
-    for _non_valued_attribute in DOM.split(' '):
-      if _non_valued_attribute != '':
-        _non_valued_attributes.append(_non_valued_attribute)
+    # format empty attributes
+    for attr in empty_attrs: attrs[attr] = True
 
-    # format valued attributes
-    for _valued_attribute in _valued_attributes:
-      _attribute_name = _valued_attribute.split('=', 1)[0]
-      _attribute_value = _valued_attribute.split('=', 1)[1][1:-1]
-
-      _attributes[_attribute_name] = _attribute_value
-
-    # format non-valued attributes
-    for _non_valued_attribute in _non_valued_attributes:
-      _attributes[_non_valued_attribute] = True
-
-    return _attributes
+    return attrs
   
 
   def _create_node(
-    self,
+    self, 
     type: str, 
     attributes: dict, 
     parent: Optional[Node]=None
-  ) -> None:
-    _node = Node(
-      type=type,
-      attributes=attributes
-    )
-
-    self._insert_element(_node)
+  ) -> Node:
+    node = Node(type=type, attributes=attributes)
+    self._insert_element(node)
 
     if parent:
-      parent.insert_child(_node)
+      parent.insert_child(node)
     else:
-      self.tree.insert_child(_node)
+      self.tree.insert_child(node)
 
-    return _node
+    return node
 
-  
+
   def _insert_node(
     self,
     node: Node,
@@ -92,24 +79,19 @@ class Parser:
       parent.insert_child(node)
     else:
       self.tree.insert_child(node)
+  
 
-
-  def _parse_open_tag(self, open: str) -> Tuple[str, dict]:
-    # remove carat delimeters
-    open = open[1:-1]
-
-    # sanitize potential closing delimeter for self-closing tags
-    if open[-1] == '/':
-      open = open[:-1]
-
-    # extract type and attributes
-    _type = open.split(' ', 1)[0]
-    _attributes = {}
-
-    if len(open.split(' ', 1)) > 1:
-      _attributes = self._extract_attributes(open.split(' ', 1)[1])
-
-    return (_type, _attributes)
+  def _parse_open_tag(self, tag: str) -> Tuple[str, dict]:
+    tag = tag.strip('<>')
+    
+    if tag.endswith('/'):
+      tag = tag[:-1]
+    
+    tag = tag.split(maxsplit=1)
+    dom_type = tag[0]
+    attrs = self._extract_attributes(tag[1]) if len(tag) > 1 else {}
+    
+    return dom_type, attrs
 
 
   def _parse_non_self_closing_tag(
@@ -119,6 +101,9 @@ class Parser:
     attributes: dict, 
     parent: Optional[Node]
   ) -> None:
+    """
+    Needs to be cleaned up
+    """
     if type in NON_DOM_PARENTS:
       if type == '!--':
         _cls_search = re.search(f'-->', DOM)
@@ -193,6 +178,9 @@ class Parser:
   
 
   def _parse_DOM(self, DOM: str, parent: Optional[Node]=None) -> None:
+    """
+    Needs to be cleaned up
+    """
     if DOM:                                       # if string is not empty
       # search for open tag
       _open_search = re.search('<[^<>]+>', DOM)
@@ -238,9 +226,7 @@ class Parser:
         )
 
   
-  def get_elements_by_type(self, type: str) -> Node:
-    try:
-      return self.elements[type]
-    except:
-      return []
+  def get_elements_by_type(self, type: str) -> list[Node]:
+    return self.elements.get(type, [])
+
       
