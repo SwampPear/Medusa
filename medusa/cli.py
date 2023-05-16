@@ -21,7 +21,7 @@ class CLI:
     ]
     info = [
         '@swamppear',
-        'v0.0.25'
+        'v0.0.3'
     ]
 
     self.write('\n'.join(title), Color.DELIMITER, True, count=False)

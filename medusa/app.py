@@ -27,6 +27,14 @@ class App:
     else:
       self._invalid(cmd)
 
+  
+  def _log(self, msg: str, color: str) -> None:
+    if self.state:
+      self.cli.write('[', Color.DELIMITER, True, end='', count=False)
+      self.cli.write(f'{self.state}', Color.INFO, True, end='', count=False)
+      self.cli.write('] ', Color.DELIMITER, True, end='', count=False)
+      self.cli.write(msg, color)
+
 
   def _exit(self) -> None:
     if self.state:
@@ -49,8 +57,13 @@ class App:
 
   def _browser(self, cmd: str, args: list[str]) -> None:
     if cmd == 'activate':
-      self.browser = Browser()
-      self.browser.url(self.search_engine)
+      try:
+        self._log('Browser activating...', Color.INFO)
+        self.browser = Browser()
+        self._log('Browser activated.', Color.DANGER)
+        self.browser.url(self.search_engine)
+      except:
+        self._log('Browser failed to activate.', Color.DANGER)
 
 
   def run(self) -> None:
