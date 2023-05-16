@@ -16,7 +16,10 @@ class Browser:
     url = 'http://localhost:9515/session'
 
     if session_id:
-      url += f'/{self.session_id}/{cmd}'
+      url += f'/{self.session_id}'
+
+      if cmd:
+        url += f'/{cmd}'
 
     return url
 
