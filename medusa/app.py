@@ -11,7 +11,7 @@ class App:
     self.cli = CLI()
     self.state = ''
 
-  
+
   def _execute_command(self, input: str) -> None:
     args = input.split(' ')
     cmd = args[0].lower()
@@ -20,18 +20,23 @@ class App:
       self._exit()
     elif cmd == 'clear':
       self._clear()
-    elif cmd == 'browser':
-      self._browser()
+    elif cmd == 'browser' and self.state != 'browser':
+      self.state = 'browser'
+    elif self.state == 'browser':
+      self._browser(cmd, args)
     else:
       self._invalid(cmd)
 
 
   def _exit(self) -> None:
-    if self.browser:
-      self.browser.exit()
+    if self.state:
+      self.state = ''
+    else:
+      if self.browser:
+        self.browser.exit()
 
-    self.cli.write('Medusa terminated.', Color.INFO, True)
-    sys.exit(0)
+      self.cli.write('Medusa terminated.', Color.INFO, True)
+      sys.exit(0)
 
   
   def _clear(self) -> None:
@@ -42,10 +47,10 @@ class App:
     self.cli.write(f'Invalid command: {command}', Color.DANGER, True)
 
 
-  def _browser(self) -> None:
-    self.state = 'browser'
-    self.browser = Browser()
-    self.browser.go_to_url(self.search_engine)
+  def _browser(self, cmd: str, args: list[str]) -> None:
+    if cmd == 'activate':
+      self.browser = Browser()
+      self.browser.go_to_url(self.search_engine)
 
 
   def run(self) -> None:
@@ -56,5 +61,5 @@ class App:
         input = self.cli.read('] ~ ', Color.DELIMITER, True)
       else:
         input = self.cli.read(f'~ ', Color.DELIMITER, True)
-        
+
       self._execute_command(input)
