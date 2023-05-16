@@ -58,7 +58,8 @@ class Browser:
     try:
       return Popen([
         f'{sys.argv[1]}/drivers/chrome/chromedriver',
-        '--port=8888'
+        '--port=8888',
+        '--proxy-server=http://localhost:8080'
         #'--headless=new',
         #'start-maximized',
         #'--disable-gpu',

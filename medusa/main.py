@@ -14,4 +14,5 @@ if __name__ == '__main__':
     'http': 'http://localhost:8080',
     'https': 'http://localhost:8080',
   }
-  a = requests.get('https://www.geeksforgeeks.org', proxies=proxy)
+
+  a = requests.get('http://localhost:8000', proxies=proxy)
