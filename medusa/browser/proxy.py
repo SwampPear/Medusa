@@ -1,57 +1,14 @@
-"""
-import requests
-from http.server import BaseHTTPRequestHandler, HTTPServer
-
-class ProxyHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.proxy_request('GET')
-
-    def do_POST(self):
-        self.proxy_request('POST')
-
-    def do_PUT(self):
-        self.proxy_request('PUT')
-
-    def do_DELETE(self):
-        self.proxy_request('DELETE')
-
-    def proxy_request(self, method):
-        url = self.path
-        headers = self.headers
-        body = self.rfile.read(int(self.headers.get('Content-Length', 0)))
-
-        # Forward the request to the destination server
-        response = requests.request(method, url, headers=headers, data=body)
-
-        # Print the intercepted request and response details
-        print(f"Request:\n{method} {url}")
-        print(f"Headers:\n{headers}")
-        print(f"Body:\n{body.decode()}")
-        print(f"Response:\n{response.status_code} {response.reason}")
-        print(f"Response Headers:\n{response.headers}")
-        print(f"Response Body:\n{response.text}")
-
-        self.send_response(response.status_code)
-        for header, value in response.headers.items():
-            self.send_header(header, value)
-        self.end_headers()
-        self.wfile.write(response.content)
-
-def run_proxy_server():
-    host = 'localhost'
-    port = 8080
-
-    server = HTTPServer((host, port), ProxyHandler)
-    print(f"Proxy server listening on {host}:{port}")
-    server.serve_forever()
-
-if __name__ == '__main__':
-    run_proxy_server()
-
-"""
 import socket
+import threading
 
-def handle_request(client_socket):
+
+class Proxy:
+  def __init__(self) -> None:
+    self.host = 'localhost'
+    self.port = 8080
+
+  
+  def _handle_request(self, client_socket) -> None:
     # Receive the request from the client
     request_data = client_socket.recv(4096)
     
@@ -77,6 +34,53 @@ def handle_request(client_socket):
     server_socket.close()
     client_socket.close()
 
+  
+  def run_proxy(self):
+    
+    # Create a listening socket for the proxy server
+    proxy_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    proxy_socket.bind((self.host, self.port))
+    proxy_socket.listen(1)
+    
+    print(f"Proxy server listening on {self.host}:{self.port}")
+    
+    while True:
+        # Accept client connections
+        client_socket, addr = proxy_socket.accept()
+        
+        # Handle the client request
+        self._handle_request(client_socket)
+
+"""
+def handle_request(client_socket):
+    # Receive the request from the client
+    request_data = client_socket.recv(4096)
+    
+    # Print the intercepted request
+    print("Request:\n" + request_data.decode())
+    
+    # Forward the request to the destination server
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.connect(('localhost', 8000))  # Replace with the actual destination server
+    
+    server_socket.sendall(request_data)
+    
+    # Receive the response from the destination server
+    response_data = server_socket.recv(4096)
+    
+    # Print the intercepted response
+    print("Response:\n" + response_data.decode())
+    
+    # Forward the response to the client
+    client_socket.sendall(response_data)
+    
+    # Close the sockets
+    server_socket.close()
+    client_socket.close()
+"""
+
+
+"""
 def run_proxy_server():
     proxy_host = 'localhost'
     proxy_port = 8080
@@ -94,9 +98,11 @@ def run_proxy_server():
         
         # Handle the client request
         handle_request(client_socket)
+"""
 
 if __name__ == '__main__':
-    run_proxy_server()
+  p = Proxy()
+  p.run_proxy()
 
 
 
