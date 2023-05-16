@@ -33,7 +33,8 @@ class App:
       self.cli.write('[', Color.DELIMITER, True, end='', count=False)
       self.cli.write(f'{self.state}', Color.INFO, True, end='', count=False)
       self.cli.write('] ', Color.DELIMITER, True, end='', count=False)
-      self.cli.write(msg, color)
+    
+    self.cli.write(msg, color)
 
 
   def _exit(self) -> None:
@@ -43,7 +44,7 @@ class App:
       if self.browser:
         self.browser.exit()
 
-      self.cli.write('Medusa terminated.', Color.INFO, True)
+      self._log('Medusa terminated.', Color.INFO)
       sys.exit(0)
 
   
