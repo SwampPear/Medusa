@@ -1,25 +1,27 @@
 import socket
 import threading
 
+from data import ProxyRequest
+
 
 class Proxy:
   def __init__(self) -> None:
     self.host = 'localhost'
     self.port = 8080
 
-  
+
   def _handle_request(self, client_socket) -> None:
-    # Receive the request from the client
-    request_data = client_socket.recv(4096)
-    
-    # Print the intercepted request
-    print("Request:\n" + request_data.decode())
+    request = ProxyRequest(client_socket.recv(4096))
     
     # Forward the request to the destination server
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.connect(('localhost', 8000))  # Replace with the actual destination server
+    server_socket.connect((request.address, int(request.port)))  # Replace with the actual destination server
+
+
+    request.append_header('Custom-X-Header', 'Mike')
+    print(request.raw)
     
-    server_socket.sendall(request_data)
+    server_socket.sendall(request.raw)
     
     # Receive the response from the destination server
     response_data = server_socket.recv(4096)
@@ -35,14 +37,14 @@ class Proxy:
     client_socket.close()
 
   
-  def run_proxy(self):
+  def run(self):
     
     # Create a listening socket for the proxy server
     proxy_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     proxy_socket.bind((self.host, self.port))
     proxy_socket.listen(1)
     
-    print(f"Proxy server listening on {self.host}:{self.port}")
+    #print(f"Proxy server listening on {self.host}:{self.port}")
     
     while True:
         # Accept client connections
@@ -51,58 +53,10 @@ class Proxy:
         # Handle the client request
         self._handle_request(client_socket)
 
-"""
-def handle_request(client_socket):
-    # Receive the request from the client
-    request_data = client_socket.recv(4096)
-    
-    # Print the intercepted request
-    print("Request:\n" + request_data.decode())
-    
-    # Forward the request to the destination server
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.connect(('localhost', 8000))  # Replace with the actual destination server
-    
-    server_socket.sendall(request_data)
-    
-    # Receive the response from the destination server
-    response_data = server_socket.recv(4096)
-    
-    # Print the intercepted response
-    print("Response:\n" + response_data.decode())
-    
-    # Forward the response to the client
-    client_socket.sendall(response_data)
-    
-    # Close the sockets
-    server_socket.close()
-    client_socket.close()
-"""
-
-
-"""
-def run_proxy_server():
-    proxy_host = 'localhost'
-    proxy_port = 8080
-    
-    # Create a listening socket for the proxy server
-    proxy_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    proxy_socket.bind((proxy_host, proxy_port))
-    proxy_socket.listen(1)
-    
-    print(f"Proxy server listening on {proxy_host}:{proxy_port}")
-    
-    while True:
-        # Accept client connections
-        client_socket, addr = proxy_socket.accept()
-        
-        # Handle the client request
-        handle_request(client_socket)
-"""
 
 if __name__ == '__main__':
   p = Proxy()
-  p.run_proxy()
+  p.run()
 
 
 

@@ -1,7 +1,7 @@
 from typing import Optional, Tuple
 import re
 from requests import Response
-from medusa.crawler.algorithm import Node
+from medusa.crawler.data import Node
 from medusa.crawler.constants import SELF_CLOSING_ELEMENTS, NON_DOM_PARENTS
 
 
