@@ -5,8 +5,11 @@ from medusa.cli import CLI, Color
 
 class App:
   def __init__(self) -> None:
+    self.search_engine = 'https://www.google.com'
     self.browser = None
+
     self.cli = CLI()
+    self.state = ''
 
   
   def _execute_command(self, input: str) -> None:
@@ -17,6 +20,8 @@ class App:
       self._exit()
     elif cmd == 'clear':
       self._clear()
+    elif cmd == 'browser':
+      self._browser()
     else:
       self._invalid(cmd)
 
@@ -37,7 +42,19 @@ class App:
     self.cli.write(f'Invalid command: {command}', Color.DANGER, True)
 
 
+  def _browser(self) -> None:
+    self.state = 'browser'
+    self.browser = Browser()
+    self.browser.go_to_url(self.search_engine)
+
+
   def run(self) -> None:
     while True:
-      input = self.cli.read('~ ', Color.DELIMITER, True)
+      if self.state:
+        self.cli.write('[', Color.DELIMITER, True, end='', count=False)
+        self.cli.write(f'{self.state}', Color.INFO, True, end='', count=False)
+        input = self.cli.read('] ~ ', Color.DELIMITER, True)
+      else:
+        input = self.cli.read(f'~ ', Color.DELIMITER, True)
+        
       self._execute_command(input)
