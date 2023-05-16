@@ -99,19 +99,19 @@ class Browser:
       return requests.post(url, json=body).json()
 
 
-  def get_current_window_handle(self) -> dict:
+  def get_window_handle(self) -> dict:
     return self._execute_command('window_handle', 'GET')['value']
   
 
-  def get_available_window_handles(self) -> dict:
+  def get_window_handles(self) -> dict:
     return self._execute_command('window_handles', 'GET')['value']
   
 
-  def get_current_url(self) -> dict:
+  def get_url(self) -> dict:
     return self._execute_command('url', 'GET')['value']
   
 
-  def go_to_url(self, url) -> dict:
+  def url(self, url) -> dict:
     return self._execute_command('url', 'POST', {'url': url})
 
   

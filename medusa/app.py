@@ -50,7 +50,7 @@ class App:
   def _browser(self, cmd: str, args: list[str]) -> None:
     if cmd == 'activate':
       self.browser = Browser()
-      self.browser.go_to_url(self.search_engine)
+      self.browser.url(self.search_engine)
 
 
   def run(self) -> None:
