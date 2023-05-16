@@ -13,7 +13,7 @@ class Browser:
   
 
   def _fmt_url(self, cmd: str='', session_id: bool=True) -> str:
-    url = 'http://localhost:9515/session'
+    url = 'http://localhost:8888/session'
 
     if session_id:
       url += f'/{self.session_id}'
@@ -58,10 +58,11 @@ class Browser:
     try:
       return Popen([
         f'{sys.argv[1]}/drivers/chrome/chromedriver',
-        '--headless=new',
-        'start-maximized',
-        '--disable-gpu',
-        '--disable-extensions'
+        '--port=8888'
+        #'--headless=new',
+        #'start-maximized',
+        #'--disable-gpu',
+        #'--disable-extensions'
       ],
         stdout=PIPE
       )
@@ -70,19 +71,11 @@ class Browser:
 
       self.exit()
       raise BrowserInitializationError('Failed to initialize driver.')
-    
-
-  def _kill(self) -> None:
-    self.popen.kill()
-
-
-  def _quit_browser(self) -> None:
-    requests.delete(self._fmt_url())
 
 
   def exit(self) -> None:
-    self._quit_browser()
-    self._kill()
+    requests.delete(self._fmt_url())    # kill browser window
+    self.popen.kill()                   # kill process
     
   
   def _execute_command(
@@ -129,7 +122,7 @@ class Browser:
   
 
 
-
+  """
   def execute(self, script, args=None):
     _body = {
       'script': script
@@ -145,17 +138,6 @@ class Browser:
     )
 
   def execute_async(self, script, args=None):
-    """
-    Executes a script in the currently selected frame.
-
-    Parameters:
-    str:script - the script to execute
-    []:args - the script arguments
-
-    Returns:
-    *: value returned from the script
-    """
-
     _body = {
       'script': script
     }
@@ -168,3 +150,4 @@ class Browser:
       method='post', 
       body = _body
     )
+  """

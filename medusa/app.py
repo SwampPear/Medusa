@@ -52,18 +52,38 @@ class App:
 
   
   def _invalid(self, command: str) -> None:
-    self.cli.write(f'Invalid command: {command}', Color.DANGER, True)
+    self.cli.write(f'Invalid command: {command}', Color.DANGER)
 
 
   def _browser(self, cmd: str, args: list[str]) -> None:
     if cmd == 'activate':
+      self._browser_activate()
+    elif cmd == 'deactivate':
+      self._browser_deactivate()
+    else:
+      self._invalid(cmd)
+
+  
+  def _browser_activate(self) -> None:
+    if not self.browser:
       try:
         self._log('Browser activating...', Color.INFO)
         self.browser = Browser()
-        self._log('Browser activated.', Color.DANGER)
+        self._log('Browser activated.', Color.SUCCESS)
         self.browser.url(self.search_engine)
       except:
         self._log('Browser failed to activate.', Color.DANGER)
+
+
+  def _browser_deactivate(self) -> None:
+    if self.browser:
+      try:
+        self._log('Browser deactivating...', Color.INFO)
+        self.browser.exit()
+        self.browser = None
+        self._log('Browser deactivated.', Color.SUCCESS)
+      except:
+        self._log('Browser failed to deactivate.', Color.DANGER)
 
 
   def run(self) -> None:
