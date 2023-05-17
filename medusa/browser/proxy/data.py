@@ -1,3 +1,4 @@
+from typing import Union
 import re
 
 
@@ -5,7 +6,7 @@ class ProxyRequest:
   def __init__(self, request) -> None:
     self.default_ports = {
       'http': 80,
-      'https': 493
+      'https': 443
     }
 
     self._parse_request(request)
@@ -16,21 +17,39 @@ class ProxyRequest:
     request_lines = request_lines.split('\r\n')
 
     self.method, self.path, self.version = request_lines[0].split(' ')
-    self.protocol, self.address, self.port = re.search(
-        r'([^:/]+)://([^:/]+)(?::([0-9]+))?', self.path
-    ).groups()
 
-    self.port = int(self.port) if self.port else self.default_ports(self.protocol)
+    if re.search(r'([^:/]+)://', self.path):
+      self.protocol = 'http'
+    else:
+      self.protocol = 'https'
+
+    if self.protocol == 'https':
+      if re.search(r'([^:/]+):|([^:/]+)/', self.path):
+        self.host = re.search(r'([^:/]+):|([^:/]+)/', self.path).group(1)
+    else:
+      if re.search(r'://([^:/]+):|://([^:/]+)/', self.path):
+        self.host = re.search(r'://([^:/]+):|://([^:/]+)/', self.path).group(1)
+
+    if re.search(r'://[^:/]+:([0-9]+)', self.path):
+      self.port = re.search(r'://[^:/]+:([0-9]+)', self.path).group(1)
+    elif self.protocol == 'https':
+      self.port = 443
+    else:
+      self.port = 80
+        
+    print(self.protocol)
+    print(self.host)
+    print(self.port)
 
     raw_headers = [header for header in request_lines[1:] if header]
     self.headers = {header.split(':', 1)[0]: header.split(':', 1)[1].strip() for header in raw_headers}
 
 
-  def append_header(self, key: str, value: str) -> None:
+  def set_header(self, key: str, value: str) -> None:
     self.headers[key] = value
 
 
-  def remove_header(self, key: str) -> str:
+  def remove_header(self, key: str) -> Union[str, None]:
     return self.headers.pop(key, None)
 
 
@@ -73,7 +92,3 @@ class ProxyResponse:
   @property
   def raw(self) -> bytes:
     return bytes(self.response, 'utf8')
-
-
-
-  

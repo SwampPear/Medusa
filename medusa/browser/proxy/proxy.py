@@ -1,4 +1,5 @@
 import socket
+import ssl
 import threading
 
 from data import ProxyRequest, ProxyResponse
@@ -13,20 +14,41 @@ class Proxy:
   def _handle_request(self, client_socket) -> None:
     request = ProxyRequest(client_socket.recv(4096))
     print(request.raw)
+    print(request.port)
     
     # Forward the request to the destination server
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.connect((request.address, int(request.port)))
-    server_socket.sendall(request.raw)
+    server_socket.connect((request.host, int(request.port)))
 
-    response = ProxyResponse(server_socket.recv(4096))
+    ######################################################################
+    """
+    # Load necessary SSL/TLS certificates and keys
+    print('1')
+    context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+    print('1')
+    context.check_hostname = False
+    context.verify_mode = ssl.CERT_NONE
+    print('1')
+
+    # Wrap the destination socket with SSL/TLS
+    ssl_server_socket = context.wrap_socket(server_socket, server_hostname=request.host)
+    print('1')
+    ssl_server_socket.do_handshake()
+    """
+    ######################################################################
+    server_socket.sendall(request.raw)                     # http
+    #ssl_server_socket.sendall(request.raw)                  # https
+
+    response = ProxyResponse(server_socket.recv(4096))     # http
+    #response = ProxyResponse(ssl_server_socket.recv(4096))  # https
  
     # Forward the response to the client
     client_socket.sendall(response.raw)
     print(response.raw)
     
     # Close the sockets
-    server_socket.close()
+    server_socket.close()                                  # http
+    #ssl_server_socket.close()                               # https
     client_socket.close()
 
   
@@ -34,6 +56,7 @@ class Proxy:
     
     # Create a listening socket for the proxy server
     proxy_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    proxy_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     proxy_socket.bind((self.host, self.port))
     proxy_socket.listen(1)
     

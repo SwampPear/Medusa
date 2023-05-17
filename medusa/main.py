@@ -17,3 +17,4 @@ if __name__ == '__main__':
   }
 
   a = requests.get('http://localhost:8000', proxies=proxy)
+  #a = requests.get('https://www.realpython.com', proxies=proxy)
