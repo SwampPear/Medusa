@@ -20,20 +20,22 @@ class Proxy:
     server_socket.connect((request.host, int(request.port)))
 
     ######################################################################
-    """
+    
     # Load necessary SSL/TLS certificates and keys
     print('1')
     context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
     print('1')
-    context.check_hostname = False
-    context.verify_mode = ssl.CERT_NONE
+    #ontext.check_hostname = False
+    #context.verify_mode = ssl.CERT_NONE
+    context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+    context.load_verify_locations(cafile='medusa/browser/proxy/ca_certificate.pem')
     print('1')
 
     # Wrap the destination socket with SSL/TLS
     ssl_server_socket = context.wrap_socket(server_socket, server_hostname=request.host)
     print('1')
     ssl_server_socket.do_handshake()
-    """
+    
     ######################################################################
     server_socket.sendall(request.raw)                     # http
     #ssl_server_socket.sendall(request.raw)                  # https
@@ -56,7 +58,7 @@ class Proxy:
     # Create a listening socket for the proxy server
     proxy_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     proxy_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    proxy_socket.bind((self.host, self.port))
+    proxy_socket.bind(('localhost', self.port))
     proxy_socket.listen(1)
     
     #print(f"Proxy server listening on {self.host}:{self.port}")
