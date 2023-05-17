@@ -1,24 +1,3 @@
-"""
-raw_request = client_socket.recv(4096)
-    request = raw_request.decode()
-
-
-def _parse_request(self, request) -> list[str]:
-    parsed_request = request.split('\r\n')
-
-    method, path, version = parsed_request[0].split(' ')
-    protocol, address, port = re.search('([^:/]+)://([^:/]+)(?::([0-9]+))?', path).groups()
-
-    port = port if port else self.default_ports(protocol)
-
-    raw_headers = [header for header in parsed_request[1:] if header]
-    headers = {header.split(':', 1)[0]: header.split(':', 1)[1].strip() for header in raw_headers}
-
-    print(protocol)
-    print(address)
-    print(port)
-    print(headers)
-"""
 import re
 
 
@@ -41,7 +20,7 @@ class ProxyRequest:
         r'([^:/]+)://([^:/]+)(?::([0-9]+))?', self.path
     ).groups()
 
-    self.port = self.port if self.port else self.default_ports(self.protocol)
+    self.port = int(self.port) if self.port else self.default_ports(self.protocol)
 
     raw_headers = [header for header in request_lines[1:] if header]
     self.headers = {header.split(':', 1)[0]: header.split(':', 1)[1].strip() for header in raw_headers}
@@ -66,6 +45,35 @@ class ProxyRequest:
   @property
   def raw(self) -> bytes:
     return bytes(self.request, 'utf8')
+  
+
+class ProxyResponse:
+  def __init__(self, response) -> None:
+    self._parse_response(response)
+
+
+  def _parse_response(self, response) -> None:
+    response_lines, self.body = response.decode().split('\r\n\r\n', 1)
+    response_lines = response_lines.split('\r\n')
+
+    self.version, self.status = response_lines[0].split(' ', 1)
+
+    raw_headers = [header for header in response_lines[1:] if header]
+    self.headers = {header.split(':', 1)[0]: header.split(':', 1)[1].strip() for header in raw_headers}
+
+
+  @property
+  def response(self) -> str:
+    response = [' '.join([self.version, self.status])]
+    headers = [f'{key}: {self.headers[key]}' for key in self.headers.keys()]
+
+    return '\r\n'.join(response + headers) + '\r\n\r\n' + self.body
+  
+
+  @property
+  def raw(self) -> bytes:
+    return bytes(self.response, 'utf8')
+
 
 
   

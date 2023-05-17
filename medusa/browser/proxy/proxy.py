@@ -1,7 +1,7 @@
 import socket
 import threading
 
-from data import ProxyRequest
+from data import ProxyRequest, ProxyResponse
 
 
 class Proxy:
@@ -12,25 +12,18 @@ class Proxy:
 
   def _handle_request(self, client_socket) -> None:
     request = ProxyRequest(client_socket.recv(4096))
+    print(request.raw)
     
     # Forward the request to the destination server
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.connect((request.address, int(request.port)))  # Replace with the actual destination server
-
-
-    request.append_header('Custom-X-Header', 'Mike')
-    print(request.raw)
-    
+    server_socket.connect((request.address, int(request.port)))
     server_socket.sendall(request.raw)
-    
-    # Receive the response from the destination server
-    response_data = server_socket.recv(4096)
-    
-    # Print the intercepted response
-    print("Response:\n" + response_data.decode())
-    
+
+    response = ProxyResponse(server_socket.recv(4096))
+ 
     # Forward the response to the client
-    client_socket.sendall(response_data)
+    client_socket.sendall(response.raw)
+    print(response.raw)
     
     # Close the sockets
     server_socket.close()
