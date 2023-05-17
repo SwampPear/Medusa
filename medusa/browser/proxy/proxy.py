@@ -6,9 +6,8 @@ from data import ProxyRequest, ProxyResponse
 
 
 class Proxy:
-  def __init__(self) -> None:
-    self.host = 'localhost'
-    self.port = 8080
+  def __init__(self, port: int) -> None:
+    self.port = port
 
 
   def _handle_request(self, client_socket) -> None:
@@ -71,7 +70,7 @@ class Proxy:
 
 
 if __name__ == '__main__':
-  p = Proxy()
+  p = Proxy(8080)
   p.run()
 
 

@@ -8,12 +8,15 @@ from medusa.exceptions import BrowserInitializationError
 
 class Browser:
   def __init__(self) -> None:
+    self.port = 8888
+    self.proxy_port = 8080
+
     self.popen = self._init_driver()
     self.session_id = self._get_session_id()
   
 
   def _fmt_url(self, cmd: str='', session_id: bool=True) -> str:
-    url = 'http://localhost:8888/session'
+    url = f'http://localhost:{self.port}/session'
 
     if session_id:
       url += f'/{self.session_id}'
@@ -58,8 +61,8 @@ class Browser:
     try:
       return Popen([
         f'{sys.argv[1]}/drivers/chrome/chromedriver',
-        '--port=8888',
-        '--proxy-server=http://localhost:8080'
+        f'--port={self.port}',
+        f'--proxy-server=http://localhost:{self.proxy_port}'
         #'--headless=new',
         #'start-maximized',
         #'--disable-gpu',
