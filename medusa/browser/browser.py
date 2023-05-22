@@ -8,7 +8,7 @@ from medusa.exceptions import BrowserInitializationError
 
 class Browser:
   def __init__(self) -> None:
-    self.port = 8888
+    self.port = 9516
     self.proxy_port = 8080
 
     self.popen = self._init_driver()

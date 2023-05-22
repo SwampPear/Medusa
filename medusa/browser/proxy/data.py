@@ -13,6 +13,7 @@ class ProxyRequest:
 
 
   def _parse_request(self, request) -> None:
+    print(request)
     request_lines, self.body = request.decode().split('\r\n\r\n', 1)
     request_lines = request_lines.split('\r\n')
 
@@ -36,10 +37,6 @@ class ProxyRequest:
       self.port = 443
     else:
       self.port = 80
-        
-    print(self.protocol)
-    print(self.host)
-    print(self.port)
 
     raw_headers = [header for header in request_lines[1:] if header]
     self.headers = {header.split(':', 1)[0]: header.split(':', 1)[1].strip() for header in raw_headers}

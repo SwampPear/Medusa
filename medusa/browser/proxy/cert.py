@@ -46,5 +46,5 @@ with open('private_key.pem', 'wb') as key_file:
     encryption_algorithm=serialization.NoEncryption()
   ))
 
-with open('ca_certificat.pem', 'wb') as cert_file:
+with open('ca_certificate.pem', 'wb') as cert_file:
   cert_file.write(certificate.public_bytes(serialization.Encoding.PEM))
