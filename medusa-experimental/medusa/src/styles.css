@@ -1,44 +1,80 @@
-@import url('https://fonts.googleapis.com/css?family=Cousine');
+@import url('https://fonts.googleapis.com/css?family=Red+Hat+Mono');
 
 :root {
-  --black-green: #191b19;
-  --dark-green: #1f241f;
-  --white-green: #ecffec;
+  --blue-black: #242d30;
+  --white: #a5c5d3;
+  --brand-gray: #354951;
+  --blue-gray: #b1bfc6;
 
-  --main-bg: linear-gradient(30deg, var(--black-green), var(--dark-green));
+  --steel: #414c51;
+  --steel-dark: #3c4d4e;
+
+  --transition: .1s ease-in-out;
 }
 
 html,
 body {
-  background: var(--black-green);
+  background: linear-gradient(20deg, #2b3b42, #192129);
   margin: 0;
 }
 
 main {
-  height: 100vh;
-  width: 100vw;
+  display: flex;
 }
+
+/* Nav */
 
 nav {
+  width: calc(18vw - 4rem);
+  height: calc(100vh - 4rem);
+  padding: 2rem;
+}
+
+
+/* Brand */
+
+.brand {
   align-items: center;
   display: flex;
-  height: 4rem;
-  justify-content: space-between;
-  margin: 0 2rem;
-  width: calc(100vw - 4rem);
 }
+
+.brand__icon {
+  height: 14px;
+  width: 14px;
+  fill: rgba(43, 59, 66, 1);
+  margin: 0 .75rem 0 0;
+}
+
+.brand__name {
+  font-size: 1.125rem;
+  color: var(--white);
+  font-family: 'Red Hat Mono';
+  font-weight: bold;
+  text-shadow: 0 0 .5px var(--white);
+}
+
+.brand__divider {
+  background-color: rgba(43, 59, 66, 1);
+  border: none;
+  border-radius: .5px;
+  height: 1px;
+  margin: 1rem 0;
+  width: 100%;
+}
+
+/* Content */
 
 .content {
-  height: calc(100vh - 4rem);
-  width: 100vw;
+  height: calc(100vh - 5);
+  padding: 2.5rem 2rem 2.5rem 0;
+  width: calc(85vw - 2);
 }
 
-.breadcrumb {
-  color: var(--white-green);
-  font-family: 'Cousine';
-  font-size: 1.125rem;
-}
-
-.badge {
-
+/* Widget */
+.widget {
+  background: rgba(43, 59, 66, 0.75);
+  border-radius: 1rem;
+  box-shadow: rgba(0, 0, 0, 0.025) 0px 4px 12px;
+  width: 500px;
+  height: 350px;
 }

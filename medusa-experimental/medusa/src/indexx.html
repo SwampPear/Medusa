@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medusa</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script type="module" src="/main.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <nav>
+        <div class="breadcrumb">
+        </div>
+        <div class="badge">
+          Settings
+        </div>
+      </nav>
+      <div class="content">
+        <div class="widget">
+          
+        </div>
+      </div>
+    </main>
+    <script>
+      const breadcrumb = document.querySelector('.breadcrumb')
+
+      const renderBreadcrumbLink = (text) => {
+        const link = document.createElement('a')
+        link.classList.add('breadcrumb__link')
+        link.textContent = text.toUpperCase()
+
+        return link
+      }
+
+      const renderBreadcrumbDelimeter = () => {
+        const delimeter = document.createElement('span')
+        delimeter.classList.add('breadcrumb__link__delimeter')
+        delimeter.textContent = '/'
+
+        return delimeter
+      }
+
+      const renderBreadcrumb = (trail) => {
+        for (let i = 0; i < trail.length; i++) {
+          breadcrumb.appendChild(renderBreadcrumbLink(trail[i]))
+
+          if (i < trail.length - 1) {
+            breadcrumb.appendChild(renderBreadcrumbDelimeter())
+          }
+        }
+      }
+
+      renderBreadcrumb(['linkedin', 'something', 'somethingelse'])
+    </script>
+  </body>
+</html>
