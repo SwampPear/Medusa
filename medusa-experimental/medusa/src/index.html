@@ -9,28 +9,48 @@
     <script type="module" src="/main.js" defer></script>
   </head>
   <body>
-    <main>
-      <nav>
+    <nav>
 
-        <div class="brand">
-          <svg xmlns="http://www.w3.org/2000/svg" class="brand__icon" viewBox="0 0 16 16">
-            <path d="M8 0a1 1 0 0 1 1 1v5.268l4.562-2.634a1 1 0 1 1 1 1.732L10 8l4.562 2.634a1 1 0 1 1-1 1.732L9 9.732V15a1 1 0 1 1-2 0V9.732l-4.562 2.634a1 1 0 1 1-1-1.732L6 8 1.438 5.366a1 1 0 0 1 1-1.732L7 6.268V1a1 1 0 0 1 1-1z"/>
-          </svg>
-          <span class="brand__name">
-            Medusa
-          </span>
-        </div>
+      <div class="breadcrumb">
+      </div>
 
-        <hr class="brand__divider"/>
-
-      </nav>
-
-      <div class="content">
-        <div class="widget">
-          h
-        </div>
+    </nav>
+    <main class="content">
+      <div class="widget">
+        h
       </div>
 
     </main>
+    <script>
+      const breadcrumb = document.querySelector('.breadcrumb')
+
+      const renderBreadcrumbLink = (text) => {
+        const link = document.createElement('a')
+        link.classList.add('breadcrumb__link')
+        link.textContent = text
+
+        return link
+      }
+
+      const renderBreadcrumbDelimeter = () => {
+        const delimeter = document.createElement('span')
+        delimeter.classList.add('breadcrumb__link__delimeter')
+        delimeter.textContent = '/'
+
+        return delimeter
+      }
+
+      const renderBreadcrumb = (trail) => {
+        for (let i = 0; i < trail.length; i++) {
+          breadcrumb.appendChild(renderBreadcrumbLink(trail[i]))
+
+          if (i < trail.length - 1) {
+            breadcrumb.appendChild(renderBreadcrumbDelimeter())
+          }
+        }
+      }
+
+      renderBreadcrumb(['linkedin', 'something', 'somethingelse'])
+    </script>
   </body>
 </html>

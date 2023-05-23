@@ -2,7 +2,7 @@
 
 :root {
   --blue-black: #242d30;
-  --white: #a5c5d3;
+  --white: #fabc6f;
   --brand-gray: #354951;
   --blue-gray: #b1bfc6;
 
@@ -14,60 +14,60 @@
 
 html,
 body {
-  background: linear-gradient(20deg, #2b3b42, #192129);
+  background: linear-gradient(20deg, #343f44, #1b1f23);
   margin: 0;
-}
-
-main {
-  display: flex;
 }
 
 /* Nav */
 
 nav {
-  width: calc(18vw - 4rem);
-  height: calc(100vh - 4rem);
-  padding: 2rem;
+  width: calc(100vw - 4rem);
+  padding: 2rem 2rem 2rem 2rem;
 }
 
-
-/* Brand */
-
-.brand {
-  align-items: center;
+/* Breadcrumb */
+.breadcrumb {
   display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: fit-content;
 }
 
-.brand__icon {
-  height: 14px;
-  width: 14px;
-  fill: rgba(43, 59, 66, 1);
-  margin: 0 .75rem 0 0;
-}
-
-.brand__name {
-  font-size: 1.125rem;
+.breadcrumb__link,
+.breadcrumb__link__delimeter {
   color: var(--white);
   font-family: 'Red Hat Mono';
-  font-weight: bold;
-  text-shadow: 0 0 .5px var(--white);
+  margin: 0;
+  padding: 0;
+  -webkit-user-select: none;
+  user-select: none;
+  text-shadow: 0 0 1px var(--white);
 }
 
-.brand__divider {
-  background-color: rgba(43, 59, 66, 1);
+.breadcrumb__link {
+  background-color: transparent;
   border: none;
-  border-radius: .5px;
-  height: 1px;
-  margin: 1rem 0;
-  width: 100%;
+  cursor: pointer;
+  font-size: .875rem;
+  transition: var(--transition);
+}
+
+.breadcrumb__link:hover {
+  text-shadow: 0 0 4px var(--white);
+}
+
+.breadcrumb__link__delimeter {
+  cursor: default;
+  font-size: .875rem;
+  margin: 0 .25rem 0 .375rem;
 }
 
 /* Content */
 
 .content {
-  height: calc(100vh - 5);
-  padding: 2.5rem 2rem 2.5rem 0;
-  width: calc(85vw - 2);
+  height: calc(100vh - 8rem);
+  padding: 4rem 2rem 4rem 0;
+  width: calc(85vw - 2rem);
 }
 
 /* Widget */
