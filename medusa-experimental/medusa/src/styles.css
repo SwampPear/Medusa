@@ -2,35 +2,43 @@
 
 :root {
   --blue-black: #242d30;
-  --white: #f1faff;
+  
   --gray: #bac2c7;
+  --dark-gray: #929a9e;
   --brand-gray: #354951;
   --blue-gray: #b1bfc6;
 
   --steel: #414c51;
   --steel-dark: #3c4d4e;
 
+  --white: #f1faff;
+  --gray: #bac2c7;
+  --dark-gray: #a4acb0;
+
+  --main-bg: linear-gradient(20deg, #2b3337, #191c20);
+  --widget-bg: rgba(43, 59, 66, 0.5);
+  
   --transition: .1s ease-in-out;
+  --box-shadow: rgba(0, 0, 0, 0.05) 0px 4px 16px;
 }
 
 html,
 body {
-  background: linear-gradient(20deg, #2b3337, #191c20);
+  background: var(--main-bg);
   display: flex;
-  height: 100vh;
   flex-direction: column;
+  height: 100vh;
   margin: 0;
   width: 100vw;
 }
 
 /* Nav */
-
 nav {
   align-items: center;
   display: flex;
   justify-content: space-between;
   width: calc(100vw - 4rem);
-  padding: 2rem 2rem 2rem 2rem;
+  padding: 2rem;
 }
 
 /* Title */
@@ -73,7 +81,7 @@ nav {
 }
 
 .breadcrumb__link:hover {
-  text-shadow: 0 0 4px var(--gray);
+  text-shadow: 0 0 5px var(--gray);
 }
 
 .breadcrumb__link__delimeter {
@@ -87,23 +95,74 @@ nav {
 }
 
 /* User */
-.user__button {
+.user__menu__button {
+  align-items: center;
   background-color: transparent;
   border: none;
+  cursor: pointer;
+  display: flex;
   height: 1.75rem;
+  justify-content: space-between;
   margin: 0;
+  padding: 0;
+}
+
+.user__menu__button__icon {
+  height: 1.75rem;
+  width: 1.75rem;
+}
+
+.user__menu__button__caret {
+  height: .75rem;
+  margin: 0 0 0 .375rem;
+  width: .75rem;
+}
+
+.user__menu__button__caret > path {
+  fill: var(--dark-gray);
+}
+
+/* temporary */
+.user__menu__button > svg > .white {
+  fill: var(--white);
+}
+
+/* temporary */
+.user__menu__button > svg > .dark-gray {
+  fill: var(--dark-gray);
+}
+
+/* App Menu */
+.actions {
+  display: flex;
+}
+
+.app__menu__button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  height: 1.75rem;
+  justify-content: space-between;
+  margin: 0 0 0 .75rem;
   padding: 0;
   width: 1.75rem;
 }
 
-.user__button > svg {
-  fill: var(--gray);
+.app__menu__button__icon {
   height: 1.75rem;
   width: 1.75rem;
 }
 
-/* Content */
+.app__menu__button__icon > path {
+  fill: var(--gray);
+  transition: var(--transition);
+}
 
+.app__menu__button__icon:hover > path {
+  fill: var(--dark-gray);
+}
+
+/* Content */
 .content {
   flex: 1;
   padding: 0 2rem 2rem 2rem;
@@ -111,9 +170,9 @@ nav {
 
 /* Widget */
 .widget {
-  background: rgba(43, 59, 66, 0.75);
+  background: vaR(--widget-bg);
   border-radius: 1rem;
-  box-shadow: rgba(0, 0, 0, 0.025) 0px 4px 12px;
+  box-shadow: var(--box-shadow);
   width: 500px;
   height: 350px;
 }

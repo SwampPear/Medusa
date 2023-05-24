@@ -19,13 +19,30 @@
         </div>
       </div>
 
-      <div class="user">
-        <button class="user__button">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
-            <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+      <div class="actions">
+        <button class="user__menu__button">
+          <svg xmlns="http://www.w3.org/2000/svg" class="user__menu__button__icon" viewBox="0 0 16 16">
+            <ellipse class="dark-gray" cx="8" cy="8" rx="8" ry="8"/>
+            <path class="white" d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+            <path class="white" fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="user__menu__button__caret" viewBox="0 0 16 16">
+            <path d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
           </svg>
         </button>
+        <button class="app__menu__button">
+          <svg xmlns="http://www.w3.org/2000/svg" class="app__menu__button__icon" viewBox="0 0 16 16">
+            <path d="M1 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V2zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V2zM1 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V7zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V7zM1 12a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-2zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-2zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2z"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="user__menu">
+
+      </div>
+
+      <div class="app__menu">
+        
       </div>
 
     </nav>
@@ -35,6 +52,12 @@
       </div>
 
     </main>
+    <script>
+      const userButton = document.querySelector('.user__button')
+      const appMenuButton = document.querySelector('.app__menu__button')
+
+
+    </script>
     <script>
       const title = document.querySelector('.title')
       const breadcrumb = document.querySelector('.breadcrumb')
