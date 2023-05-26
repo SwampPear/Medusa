@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans');
+@import url('https://fonts.googleapis.com/css?family=Space+Mono');
 
 :root {
   --blue-black: #242d30;
@@ -17,8 +18,9 @@
 
   --main-bg: linear-gradient(20deg, #2b3337, #191c20);
   --widget-bg: rgba(43, 59, 66, 0.5);
+  --widget-bg-hover: rgba(27, 36, 41, 0.5);
   
-  --transition: .1s ease-in-out;
+  --transition: .15s ease-in-out;
   --box-shadow: rgba(0, 0, 0, 0.05) 0px 4px 16px;
 }
 
@@ -81,7 +83,8 @@ nav {
 }
 
 .breadcrumb__link:hover {
-  text-shadow: 0 0 5px var(--gray);
+  color: var(--dark-gray);
+  text-shadow: 0 0 5px var(--dark-gray);
 }
 
 .breadcrumb__link__delimeter {
@@ -94,7 +97,7 @@ nav {
   margin: 0 .25rem 0 0;
 }
 
-/* User */
+/* User Menu Button */
 .user__menu__button {
   align-items: center;
   background-color: transparent;
@@ -132,7 +135,7 @@ nav {
   fill: var(--dark-gray);
 }
 
-/* App Menu */
+/* App Menu Button */
 .actions {
   display: flex;
 }
@@ -162,6 +165,15 @@ nav {
   fill: var(--dark-gray);
 }
 
+/* User Menu */
+.user__menu {
+  display: none;
+}
+
+.app__menu {
+  display: none;
+}
+
 /* Content */
 .content {
   flex: 1;
@@ -173,6 +185,33 @@ nav {
   background: vaR(--widget-bg);
   border-radius: 1rem;
   box-shadow: var(--box-shadow);
+  padding: 1rem;
   width: 500px;
   height: 350px;
+}
+
+.widget__table {
+  font-family: 'Space Mono';
+}
+
+.widget__table > tbody > tr > th {
+  color: var(--white);
+  font-weight: normal;
+  padding: 0 0 1rem 0;
+}
+
+.widget__table > tbody > tr > td {
+  color: var(--gray);
+}
+
+.widget__table > tbody > tr {
+  transition: var(--transition);
+}
+
+.widget__table > tbody > tr:hover {
+  background-color: var(--widget-bg-hover);
+}
+
+.widget__table > tbody > tr:first-child:hover {
+  background-color: transparent;
 }
